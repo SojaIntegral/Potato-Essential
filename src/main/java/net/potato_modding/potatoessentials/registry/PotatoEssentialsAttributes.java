@@ -39,29 +39,29 @@ public class PotatoEssentialsAttributes {
         ATTRIBUTES.register(eventBus);
     }
 
+    private static DeferredHolder<Attribute, Attribute> registerSpecialAttributes(String id, double defaultVal, double minVal, double maxVal) {
+        return ATTRIBUTES.register(id, () ->
+                (new PercentageAttribute("attribute.potatoessentials." + id,
+                        defaultVal, minVal, maxVal).setSyncable(true)));
+    }
+
+    private static DeferredHolder<Attribute, Attribute> registerMagicAttributes(String id, double defaultVal, double minVal, double maxVal) {
+        return ATTRIBUTES.register(id, () ->
+                (new MagicRangedAttribute("attribute.potatoessentials." + id,
+                        defaultVal, minVal, maxVal).setSyncable(true)));
+    }
+
+    private static DeferredHolder<Attribute, Attribute> registerRegularAttributes(String id, double defaultVal, double minVal, double maxVal) {
+        return ATTRIBUTES.register(id, () ->
+                (new RangedAttribute("attribute.potatoessentials." + id,
+                        defaultVal, minVal, maxVal).setSyncable(true)));
+    }
+
     @SubscribeEvent
     public static void modifyEntityAttributes(EntityAttributeModificationEvent event) {
         event.getTypes().forEach(entityType ->
                 ATTRIBUTES.getEntries().forEach(
                         attributeDeferredHolder -> event.add(entityType, attributeDeferredHolder
                         )));
-    }
-
-    private static DeferredHolder<Attribute, Attribute> registerSpecialAttributes(String id, double defaultVal, double minVal, double maxVal) {
-        return ATTRIBUTES.register(id, () ->
-                (new PercentageAttribute("attribute.potatospellbookstweaks." + id,
-                        defaultVal, minVal, maxVal).setSyncable(true)));
-    }
-
-    private static DeferredHolder<Attribute, Attribute> registerMagicAttributes(String id, double defaultVal, double minVal, double maxVal) {
-        return ATTRIBUTES.register(id, () ->
-                (new MagicRangedAttribute("attribute.potatospellbookstweaks." + id,
-                        defaultVal, minVal, maxVal).setSyncable(true)));
-    }
-
-    private static DeferredHolder<Attribute, Attribute> registerRegularAttributes(String id, double defaultVal, double minVal, double maxVal) {
-        return ATTRIBUTES.register(id, () ->
-                (new RangedAttribute("attribute.potatospellbookstweaks." + id,
-                        defaultVal, minVal, maxVal).setSyncable(true)));
     }
 }
