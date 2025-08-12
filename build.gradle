@@ -199,6 +199,9 @@ dependencies {
     // Ace Spell Utils
     implementation "curse.maven:aces-spell-utils-1299492:6772134"
 
+    //
+    implementation "curse.maven:potato-spell-tweaks-1238818:6831081"
+
     // Ender's Stuff
     implementation "curse.maven:enders-spellsandstuff-1140215:6427854"
 

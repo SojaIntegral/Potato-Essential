@@ -35,6 +35,9 @@ public class PotatoEssentialsAttributes {
     public static final DeferredHolder<Attribute, Attribute> MANA_SHIELD =
             registerRegularAttributes("mana_shield",0,0,10);
 
+    public static final DeferredHolder<Attribute, Attribute> POWER_LEVEL =
+            registerRegularAttributes("power_level",0,0,999999999);
+
     public static void register(IEventBus eventBus) {
         ATTRIBUTES.register(eventBus);
     }
