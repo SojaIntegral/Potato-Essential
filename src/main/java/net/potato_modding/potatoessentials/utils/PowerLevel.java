@@ -158,6 +158,7 @@ public class PowerLevel {
         double elementalResist;
         double spellShred;
         double typeMod = 1;
+
         double raceMod = 1;
 
         // Defensive attributes
