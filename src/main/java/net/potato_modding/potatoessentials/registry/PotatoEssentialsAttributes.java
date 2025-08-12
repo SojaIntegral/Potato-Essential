@@ -17,7 +17,7 @@ import net.potato_modding.potatoessentials.PotatoEssentials;
 public class PotatoEssentialsAttributes {
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, PotatoEssentials.MOD_ID);
 
-    //Spell bypass
+    //Spell Shred
     public static final DeferredHolder<Attribute, Attribute> SPELL_RESIST_SHRED =
             registerSpecialAttributes("spell_res_shred", 0, 0, 1);
     public static final DeferredHolder<Attribute, Attribute> SPELL_RESIST_PIERCE =
