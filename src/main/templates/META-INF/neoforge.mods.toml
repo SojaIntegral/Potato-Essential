@@ -23,7 +23,7 @@ license="All Rights Reserved"
 modId="potatoessentials" #mandatory
 
 # The version number of the mod
-version="1.0.2" #mandatory
+version="1.0.3-HOTFIX" #mandatory
 
 # A display name for the mod
 displayName="Potato Essentials" #mandatory
@@ -58,7 +58,7 @@ config="potatoessentials.mixins.json"
 # The coremods config file path is not configurable and is always loaded from META-INF/coremods.json
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.potatospellbookstweaks]] #optional
+[[dependencies.potatoessentials]] #optional
 # the modid of the dependency
 modId="neoforge" #mandatory
 # The type of the dependency. Can be one of "required", "optional", "incompatible" or "discouraged" (case-insensitive).

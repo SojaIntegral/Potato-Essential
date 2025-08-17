@@ -1,3 +1,4 @@
+/*
 package net.potato_modding.potatoessentials.utils;
 
 import com.snackpirate.aeromancy.spells.AASpells;
@@ -7,7 +8,9 @@ import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import net.acetheeldritchking.cataclysm_spellbooks.registries.CSAttributeRegistry;
 import net.ender.endersequipment.registries.EEAttributeRegistry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,9 +21,7 @@ import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.potato_modding.potatoessentials.registry.PotatoEssentialsAttributes;
-import net.potato_modding.potatospells.registry.PotatoAttributes;
-import net.potato_modding.potatospells.tags.PotatoTags;
-import net.potato_modding.potatospells.utils.ConfigFormulas;
+import net.potato_modding.potatoessentials.tags.PotatoTags;
 import net.warphan.iss_magicfromtheeast.registries.MFTEAttributeRegistries;
 
 import java.math.BigDecimal;
@@ -28,6 +29,72 @@ import java.math.RoundingMode;
 
 @EventBusSubscriber
 public class PowerLevel {
+
+    private static double health = 20;
+    private static double attack = 1;
+    private static double armor = 0;
+
+    private static double mana = 100;
+    private static double maxMana = 100;
+    private static double resist = 1;
+    private static double power = 1;
+    private static double cast = 1;
+    private static double cooldown = 1;
+
+    private static double critDmg = 0;
+    private static double critChance = 0;
+    private static double armorPierce = 0;
+    private static double armorShred = 0;
+    private static double protPierce = 0;
+    private static double protShred = 0;
+
+    private static double atkIV = 0;
+    private static double armorIV = 0;
+    private static double powIV = 0;
+    private static double resIV = 0;
+    private static double castIV = 0;
+    private static double penIV = 0;
+    private static double shredIV = 0;
+    private static double critIV = 0;
+
+    private static double atkSpeed = 0;
+
+    private static double firePow = 0;
+    private static double icePow = 0;
+    private static double lightningPow = 0;
+    private static double naturePow = 0;
+    private static double enderPow = 0;
+    private static double holyPow = 0;
+    private static double eldritchPow = 0;
+    private static double evocationPow = 0;
+    private static double abyssalPow = 0;
+    private static double bladePow = 0;
+    private static double soundPow = 0;
+    private static double windPow = 0;
+    private static double symmetryPow = 0;
+    private static double dunePow = 0;
+    private static double spiritPow = 0;
+
+    private static double fireRes = 0;
+    private static double iceRes = 0;
+    private static double lightningRes = 0;
+    private static double natureRes = 0;
+    private static double enderRes = 0;
+    private static double holyRes = 0;
+    private static double eldritchRes = 0;
+    private static double evocationRes = 0;
+    private static double abyssalRes = 0;
+    private static double bladeRes = 0;
+    private static double soundRes = 0;
+    private static double windRes = 0;
+    private static double symmetryRes = 0;
+    private static double duneRes = 0;
+    private static double spiritRes = 0;
+
+    private static double manaRend = 0;
+    private static double manaSteal = 0;
+    private static double resPierce = 0;
+    private static double resShred = 0;
 
     @SubscribeEvent
     public static void onArmorChange(LivingEquipmentChangeEvent event) {
@@ -63,8 +130,8 @@ public class PowerLevel {
 
     @SubscribeEvent
     public static void onDamageEvent(LivingIncomingDamageEvent event) {
-            LivingEntity entity = event.getEntity();
-            updatePowerValue(entity);
+        LivingEntity entity = event.getEntity();
+        updatePowerValue(entity);
     }
 
     @SubscribeEvent
@@ -74,64 +141,111 @@ public class PowerLevel {
     }
 
     private static void updatePowerValue(LivingEntity entity) {
-        double health = entity.getHealth();
-        double armor = (entity.getAttribute(Attributes.ARMOR) == null) ? 0 : entity.getAttributeValue(Attributes.ARMOR);
-        double attack = (entity.getAttribute(Attributes.ATTACK_DAMAGE) == null) ? 0 : entity.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        double mana = (entity instanceof Player) ? ((ModList.get().isLoaded("irons_spellbooks")) ? MagicData.getPlayerMagicData(entity).getMana() : 100) : 100;
-        double maxMana = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.MAX_MANA) : 100);
-        double resist = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.SPELL_RESIST) : 1);
-        double power = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.SPELL_POWER) : 1);
-        double cast = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.CAST_TIME_REDUCTION) : 1);
-        double cooldown = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.COOLDOWN_REDUCTION) : 1);
-        double critDmg = entity.getAttributeValue(ALObjects.Attributes.CRIT_DAMAGE);
-        double critChance = entity.getAttributeValue(ALObjects.Attributes.CRIT_CHANCE);
-        double armorPierce = entity.getAttributeValue(ALObjects.Attributes.ARMOR_PIERCE);
-        double armorShred = entity.getAttributeValue(ALObjects.Attributes.ARMOR_SHRED);
-        double protPierce = entity.getAttributeValue(ALObjects.Attributes.PROT_PIERCE);
-        double protShred = entity.getAttributeValue(ALObjects.Attributes.PROT_SHRED);
-        double atkIV = ((ModList.get().isLoaded("potatospellbookstweaks")) ? entity.getAttributeValue(PotatoAttributes.ATTACK_IV) : 0);
-        double armorIV = ((ModList.get().isLoaded("potatospellbookstweaks")) ? entity.getAttributeValue(PotatoAttributes.ARMOR_IV) : 0);
-        double powIV = ((ModList.get().isLoaded("potatospellbookstweaks")) ? entity.getAttributeValue(PotatoAttributes.POWER_IV) : 0);
-        double resIV = ((ModList.get().isLoaded("potatospellbookstweaks")) ? entity.getAttributeValue(PotatoAttributes.RESIST_IV) : 0);
-        double castIV = ((ModList.get().isLoaded("potatospellbookstweaks")) ? entity.getAttributeValue(PotatoAttributes.CAST_IV) : 0);
-        double penIV = ((ModList.get().isLoaded("potatospellbookstweaks")) ? entity.getAttributeValue(PotatoAttributes.ARMOR_PEN_IV) : 0);
-        double shredIV = ((ModList.get().isLoaded("potatospellbookstweaks")) ? entity.getAttributeValue(PotatoAttributes.PROT_PEN_IV) : 0);
-        double critIV = ((ModList.get().isLoaded("potatospellbookstweaks")) ? entity.getAttributeValue(PotatoAttributes.CRIT_IV) : 0);
-        double atkSpeed = (entity.getAttribute(Attributes.ATTACK_SPEED) == null) ? 0 :  entity.getAttributeValue(Attributes.ATTACK_SPEED);
-        double firePow = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.FIRE_SPELL_POWER) : 1);
-        double icePow = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.ICE_SPELL_POWER) : 1);
-        double lightningPow = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.LIGHTNING_SPELL_POWER) : 1);
-        double naturePow = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.NATURE_SPELL_POWER) : 1);
-        double enderPow = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.ENDER_SPELL_POWER) : 1);
-        double holyPow = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.HOLY_SPELL_POWER) : 1);
-        double eldritchPow = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.ELDRITCH_SPELL_POWER) : 1);
-        double evocationPow = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.EVOCATION_SPELL_POWER) : 1);
-        double abyssalPow = ((ModList.get().isLoaded("cataclysm_spellbooks")) ? entity.getAttributeValue(CSAttributeRegistry.ABYSSAL_MAGIC_POWER) : 1);
-        double bladePow = ((ModList.get().isLoaded("endersequipment")) ? entity.getAttributeValue(EEAttributeRegistry.BLADE_SPELL_POWER) : 1);
-        double soundPow = ((ModList.get().isLoaded("alshanex_familiars")) ? entity.getAttributeValue(net.alshanex.familiarslib.registry.AttributeRegistry.SOUND_SPELL_POWER) : 1);
-        double windPow = ((ModList.get().isLoaded("aero_additions")) ? entity.getAttributeValue(AASpells.Attributes.WIND_SPELL_POWER) : 1);
-        double symmetryPow = ((ModList.get().isLoaded("iss_magicfromtheeast")) ? entity.getAttributeValue(MFTEAttributeRegistries.SYMMETRY_SPELL_POWER) : 1);
-        double dunePow = ((ModList.get().isLoaded("iss_magicfromtheeast")) ? entity.getAttributeValue(MFTEAttributeRegistries.DUNE_SPELL_POWER) : 1);
-        double spiritPow = ((ModList.get().isLoaded("iss_magicfromtheeast")) ? entity.getAttributeValue(MFTEAttributeRegistries.SPIRIT_SPELL_POWER) : 1);
-        double fireRes = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.FIRE_MAGIC_RESIST) : 1);
-        double iceRes = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.ICE_MAGIC_RESIST) : 1);
-        double lightningRes = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.LIGHTNING_MAGIC_RESIST) : 1);
-        double natureRes = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.NATURE_MAGIC_RESIST) : 1);
-        double enderRes = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.ENDER_MAGIC_RESIST) : 1);
-        double holyRes = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.HOLY_MAGIC_RESIST) : 1);
-        double eldritchRes = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.ELDRITCH_MAGIC_RESIST) : 1);
-        double evocationRes = ((ModList.get().isLoaded("irons_spellbooks")) ? entity.getAttributeValue(AttributeRegistry.EVOCATION_MAGIC_RESIST) : 1);
-        double abyssalRes = ((ModList.get().isLoaded("cataclysm_spellbooks")) ? entity.getAttributeValue(CSAttributeRegistry.ABYSSAL_MAGIC_RESIST) : 1);
-        double bladeRes = ((ModList.get().isLoaded("endersequipment")) ? entity.getAttributeValue(EEAttributeRegistry.BLADE_MAGIC_RESIST) : 1);
-        double soundRes = ((ModList.get().isLoaded("alshanex_familiars")) ? entity.getAttributeValue(net.alshanex.familiarslib.registry.AttributeRegistry.SOUND_MAGIC_RESIST) : 1);
-        double windRes = ((ModList.get().isLoaded("aero_additions")) ? entity.getAttributeValue(AASpells.Attributes.WIND_MAGIC_RESIST) : 1);
-        double symmetryRes = ((ModList.get().isLoaded("iss_magicfromtheeast")) ? entity.getAttributeValue(MFTEAttributeRegistries.SYMMETRY_MAGIC_RESIST) : 1);
-        double duneRes = ((ModList.get().isLoaded("iss_magicfromtheeast")) ? entity.getAttributeValue(MFTEAttributeRegistries.DUNE_MAGIC_RESIST) : 1);
-        double spiritRes = ((ModList.get().isLoaded("iss_magicfromtheeast")) ? entity.getAttributeValue(MFTEAttributeRegistries.SPIRIT_MAGIC_RESIST) : 1);
-        double manaRend = entity.getAttributeValue(PotatoEssentialsAttributes.MANA_REND);
-        double manaSteal = entity.getAttributeValue(PotatoEssentialsAttributes.MANA_STEAL);
-        double resPierce = entity.getAttributeValue(PotatoEssentialsAttributes.SPELL_RESIST_PIERCE);
-        double resShred = entity.getAttributeValue(PotatoEssentialsAttributes.SPELL_RESIST_SHRED);
+        health = entity.getHealth();
+        if (entity.getAttribute(Attributes.ARMOR) != null) {
+            armor = entity.getAttributeValue(Attributes.ARMOR);
+        }
+        if (entity.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
+            attack = entity.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        }
+
+        if (ModList.get().isLoaded("irons_spellbooks")) {
+            if (entity instanceof Player) {
+                mana = MagicData.getPlayerMagicData(entity).getMana();
+            }
+            else {
+                mana = 100;
+            }
+            maxMana = entity.getAttributeValue(AttributeRegistry.MAX_MANA);
+            resist = entity.getAttributeValue(AttributeRegistry.SPELL_RESIST);
+            power = entity.getAttributeValue(AttributeRegistry.SPELL_POWER);
+            cast = entity.getAttributeValue(AttributeRegistry.CAST_TIME_REDUCTION);
+            cooldown = entity.getAttributeValue(AttributeRegistry.COOLDOWN_REDUCTION);
+        }
+
+        critDmg = entity.getAttributeValue(ALObjects.Attributes.CRIT_DAMAGE);
+        critChance = entity.getAttributeValue(ALObjects.Attributes.CRIT_CHANCE);
+        armorPierce = entity.getAttributeValue(ALObjects.Attributes.ARMOR_PIERCE);
+        armorShred = entity.getAttributeValue(ALObjects.Attributes.ARMOR_SHRED);
+        protPierce = entity.getAttributeValue(ALObjects.Attributes.PROT_PIERCE);
+        protShred = entity.getAttributeValue(ALObjects.Attributes.PROT_SHRED);
+
+        atkIV = entity.getAttributeValue(PotatoEssentialsAttributes.ATTACK_IV);
+        armorIV = entity.getAttributeValue(PotatoEssentialsAttributes.ARMOR_IV);
+        powIV = entity.getAttributeValue(PotatoEssentialsAttributes.POWER_IV);
+        resIV = entity.getAttributeValue(PotatoEssentialsAttributes.RESIST_IV);
+        castIV = entity.getAttributeValue(PotatoEssentialsAttributes.CAST_IV);
+        penIV = entity.getAttributeValue(PotatoEssentialsAttributes.ARMOR_PEN_IV);
+        shredIV = entity.getAttributeValue(PotatoEssentialsAttributes.PROT_PEN_IV);
+        critIV = entity.getAttributeValue(PotatoEssentialsAttributes.CRIT_IV);
+
+        if (entity.getAttribute(Attributes.ATTACK_SPEED) == null) {
+            atkSpeed = 2;
+        }
+        else {
+            entity.getAttributeValue(Attributes.ATTACK_SPEED);
+        }
+
+        if (ModList.get().isLoaded("irons_spellbooks")) {
+            fireRes = entity.getAttributeValue(AttributeRegistry.FIRE_SPELL_POWER);
+            iceRes = entity.getAttributeValue(AttributeRegistry.ICE_SPELL_POWER);
+            lightningRes = entity.getAttributeValue(AttributeRegistry.LIGHTNING_SPELL_POWER);
+            natureRes = entity.getAttributeValue(AttributeRegistry.NATURE_SPELL_POWER);
+            enderRes = entity.getAttributeValue(AttributeRegistry.ENDER_SPELL_POWER);
+            holyRes = entity.getAttributeValue(AttributeRegistry.HOLY_SPELL_POWER);
+            eldritchRes = entity.getAttributeValue(AttributeRegistry.ELDRITCH_SPELL_POWER);
+            evocationRes = entity.getAttributeValue(AttributeRegistry.EVOCATION_SPELL_POWER);
+        }
+        if (ModList.get().isLoaded("cataclysm_spellbooks")) {
+            abyssalRes = entity.getAttributeValue(CSAttributeRegistry.ABYSSAL_MAGIC_POWER);
+        }
+        if (ModList.get().isLoaded("endersequipment")) {
+            bladeRes = entity.getAttributeValue(EEAttributeRegistry.BLADE_SPELL_POWER);
+        }
+        if (ModList.get().isLoaded("alshanex_familiars")) {
+            soundRes = entity.getAttributeValue(net.alshanex.familiarslib.registry.AttributeRegistry.SOUND_SPELL_POWER);
+        }
+        if (ModList.get().isLoaded("aero_additions")) {
+            windRes = entity.getAttributeValue(AASpells.Attributes.WIND_SPELL_POWER);
+        }
+        if (ModList.get().isLoaded("iss_magicfromtheeast")) {
+            symmetryRes = entity.getAttributeValue(MFTEAttributeRegistries.SYMMETRY_SPELL_POWER);
+            duneRes = entity.getAttributeValue(MFTEAttributeRegistries.DUNE_SPELL_POWER);
+            spiritRes = entity.getAttributeValue(MFTEAttributeRegistries.SPIRIT_SPELL_POWER);
+        }
+
+        if (ModList.get().isLoaded("irons_spellbooks")) {
+            fireRes = entity.getAttributeValue(AttributeRegistry.FIRE_MAGIC_RESIST);
+            iceRes = entity.getAttributeValue(AttributeRegistry.ICE_MAGIC_RESIST);
+            lightningRes = entity.getAttributeValue(AttributeRegistry.LIGHTNING_MAGIC_RESIST);
+            natureRes = entity.getAttributeValue(AttributeRegistry.NATURE_MAGIC_RESIST);
+            enderRes = entity.getAttributeValue(AttributeRegistry.ENDER_MAGIC_RESIST);
+            holyRes = entity.getAttributeValue(AttributeRegistry.HOLY_MAGIC_RESIST);
+            eldritchRes = entity.getAttributeValue(AttributeRegistry.ELDRITCH_MAGIC_RESIST);
+            evocationRes = entity.getAttributeValue(AttributeRegistry.EVOCATION_MAGIC_RESIST);
+        }
+        if (ModList.get().isLoaded("cataclysm_spellbooks")) {
+            abyssalRes = entity.getAttributeValue(CSAttributeRegistry.ABYSSAL_MAGIC_RESIST);
+        }
+        if (ModList.get().isLoaded("endersequipment")) {
+            bladeRes = entity.getAttributeValue(EEAttributeRegistry.BLADE_MAGIC_RESIST);
+        }
+        if (ModList.get().isLoaded("alshanex_familiars")) {
+            soundRes = entity.getAttributeValue(net.alshanex.familiarslib.registry.AttributeRegistry.SOUND_MAGIC_RESIST);
+        }
+        if (ModList.get().isLoaded("aero_additions")) {
+            windRes = entity.getAttributeValue(AASpells.Attributes.WIND_MAGIC_RESIST);
+        }
+        if (ModList.get().isLoaded("iss_magicfromtheeast")) {
+            symmetryRes = entity.getAttributeValue(MFTEAttributeRegistries.SYMMETRY_MAGIC_RESIST);
+            duneRes = entity.getAttributeValue(MFTEAttributeRegistries.DUNE_MAGIC_RESIST);
+            spiritRes = entity.getAttributeValue(MFTEAttributeRegistries.SPIRIT_MAGIC_RESIST);
+        }
+
+        manaRend = entity.getAttributeValue(PotatoEssentialsAttributes.MANA_REND);
+        manaSteal = entity.getAttributeValue(PotatoEssentialsAttributes.MANA_STEAL);
+        resPierce = entity.getAttributeValue(PotatoEssentialsAttributes.SPELL_RESIST_PIERCE);
+        resShred = entity.getAttributeValue(PotatoEssentialsAttributes.SPELL_RESIST_SHRED);
 
         double castParse = RebalanceHandler.rebalanceCastFormula(cast);
         double cooldownParse = RebalanceHandler.rebalanceCooldownFormula(cooldown);
@@ -158,7 +272,6 @@ public class PowerLevel {
         double elementalResist;
         double spellShred;
         double typeMod = 1;
-
         double raceMod = 1;
 
         // Defensive attributes
@@ -173,7 +286,8 @@ public class PowerLevel {
                 * RebalanceHandler.rebalanceResistFormula(spiritRes);
         resistLevel = (resistParse * elementalResist);
         double defensePowerPre = ((health * 0.05) * resistLevel) + (armorLevel * resistLevel); // Using vanilla health as base (1/20)
-        if(entity.getType().is(PotatoTags.PLAYER)) defensePower = defensePowerPre * ((mana / (maxMana + 1000)) + 1);
+        if (entity.getType().is(PotatoTags.PLAYER))
+            defensePower = defensePowerPre * ((mana / (maxMana + 1000)) + 1);
 
         // Universal combat attributes
         criticalLevel = Math.clamp(critChance, 0, 1);
@@ -193,8 +307,8 @@ public class PowerLevel {
         }
 
         // Magic attributes
-        manaLevel = 0.5 * ((mana <= 100? mana : 100 + Math.sqrt(mana - 100)) + (maxMana <= 100? maxMana : 100 + Math.sqrt(maxMana - 100)));
-        spellLevel = power * elementalPower * (1 + manaRend / 100);
+        manaLevel = 0.5 * ((mana <= 100 ? mana : 100 + Math.sqrt(mana - 100)) + (maxMana <= 100 ? maxMana : 100 + Math.sqrt(maxMana - 100)));
+        spellLevel = power * elementalPower * (1 + (manaRend / 100));
         castLevel = (1 + castParse) == 0 ? -0.01 : (1 + castParse);
         cooldownLevel = (1 + cooldownParse) == 0 ? -0.01 : (1 + cooldownParse);
         critMagicLevel = Math.max(Math.pow(critDmg, criticalLevel), 1);
@@ -202,38 +316,39 @@ public class PowerLevel {
         magicalPower = manaLevel * spellLevel * castLevel * cooldownLevel * bypassLevel * critMagicLevel * spellShred;
 
         // Attack
-        attackLevel = 5 * attack * atkSpeed * (1 + manaRend / 100);
+        attackLevel = 5 * attack * atkSpeed * (1 + (manaRend / 100));
         attackPower = attackLevel * bypassLevel * critLevel; // Critical for attack has more value because of jump crit
 
         // IV bonus
         ivLevel = (atkIV + powIV + armorIV + resIV + castIV + critIV + penIV + shredIV) * 0.125;
 
-        if(entity.getType().is(PotatoTags.BOSS)) typeMod = ConfigFormulas.boss_mod * 0.75;
-        if(entity.getType().is(PotatoTags.MINIBOSS)) typeMod = ConfigFormulas.mini_mod * 0.5;
-        if(entity.getType().is(PotatoTags.NORMAL)) typeMod = ConfigFormulas.mob_mod * 0.3;
-        if(entity.getType().is(PotatoTags.SUMMON)) typeMod = ConfigFormulas.summon_mod * 0.25;
+        if (entity.getType().is(PotatoTags.BOSS)) typeMod = ConfigFormulas.boss_mod * 0.75;
+        if (entity.getType().is(PotatoTags.MINIBOSS)) typeMod = ConfigFormulas.mini_mod * 0.5;
+        if (entity.getType().is(PotatoTags.NORMAL)) typeMod = ConfigFormulas.mob_mod * 0.3;
+        if (entity.getType().is(PotatoTags.SUMMON)) typeMod = ConfigFormulas.summon_mod * 0.25;
 
-        if(entity.getType().is(PotatoTags.RACE_AMORPH)) raceMod = 1.15;
-        if(entity.getType().is(PotatoTags.RACE_BRUTE)) raceMod = 1.05;
-        if(entity.getType().is(PotatoTags.RACE_CONSTRUCT)) raceMod = 1.2;
-        if(entity.getType().is(PotatoTags.RACE_DRAGON)) raceMod = 1.2;
-        if(entity.getType().is(PotatoTags.RACE_DRAGONBORN)) raceMod = 1.15;
-        if(entity.getType().is(PotatoTags.RACE_FISH)) raceMod = 1.05;
-        if(entity.getType().is(PotatoTags.RACE_FLYING)) raceMod = 1;
-        if(entity.getType().is(PotatoTags.RACE_GOLEM)) raceMod = 1.25;
-        if(entity.getType().is(PotatoTags.RACE_HUMAN)) raceMod = 1.05;
-        if(entity.getType().is(PotatoTags.RACE_HUMANOID)) raceMod = 1.025;
-        if(entity.getType().is(PotatoTags.RACE_INSECT)) raceMod = 1.15;
+        if (entity.getType().is(PotatoTags.RACE_AMORPH)) raceMod = 1.15;
+        if (entity.getType().is(PotatoTags.RACE_BRUTE)) raceMod = 1.05;
+        if (entity.getType().is(PotatoTags.RACE_CONSTRUCT)) raceMod = 1.2;
+        if (entity.getType().is(PotatoTags.RACE_DRAGON)) raceMod = 1.2;
+        if (entity.getType().is(PotatoTags.RACE_DRAGONBORN)) raceMod = 1.15;
+        if (entity.getType().is(PotatoTags.RACE_FISH)) raceMod = 1.05;
+        if (entity.getType().is(PotatoTags.RACE_FLYING)) raceMod = 1;
+        if (entity.getType().is(PotatoTags.RACE_GOLEM)) raceMod = 1.25;
+        if (entity.getType().is(PotatoTags.RACE_HUMAN)) raceMod = 1.05;
+        if (entity.getType().is(PotatoTags.RACE_HUMANOID)) raceMod = 1.025;
+        if (entity.getType().is(PotatoTags.RACE_INSECT)) raceMod = 1.15;
 
         // Power Level
-        double powerLevelPre = (defensePower + attackPower + magicalPower) * (1 + ivLevel) * typeMod * raceMod * (1 + manaSteal / 10);
+        double powerLevelPre = (defensePower + attackPower + magicalPower) * (1 + ivLevel) * typeMod * raceMod * (1 + (manaSteal / 10));
         powerLevel = BigDecimal.valueOf(powerLevelPre).setScale(0, RoundingMode.FLOOR).intValue();
 
         var instance = entity.getAttributes().getInstance(PotatoEssentialsAttributes.POWER_LEVEL);
-        if (instance != null)
-        {
-            instance.setBaseValue(powerLevel);
-        }
+        if (instance == null) return;
+
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("potatoessentials", "power_level");
+        instance.removeModifier(id);
+        instance.addPermanentModifier(new AttributeModifier(id, powerLevel, AttributeModifier.Operation.ADD_VALUE));
     }
 }
-
+ */

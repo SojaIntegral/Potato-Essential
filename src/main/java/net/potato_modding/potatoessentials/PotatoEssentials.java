@@ -26,7 +26,6 @@ import net.potato_modding.potatoessentials.registry.PotatoEssentialsAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @SuppressWarnings("unused")
 @Mod(PotatoEssentials.MOD_ID)
 public class PotatoEssentials {
