@@ -49,6 +49,8 @@ public class ServerConfigs {
                 BUILDER.push("Custom Formula");
                 BUILDER.comment("WARNING: Do not mess with this if you don't know what you are doing!");
                 RE_BALANCE = BUILDER.worldRestart().define("Enable Custom Formula", false);
+                BUILDER.comment("Enabling custom formula disables all pre-sets");
+                BUILDER.comment("Only use if you know exactly what you are doing!");
                 FORMULA_COOLDOWN_CUSTOM = BUILDER.worldRestart().define("Cooldown Reduction formula", "x >= 0 ? (2 * x) / (x + 1) : x");
                 FORMULA_CAST_CUSTOM = BUILDER.worldRestart().define("Cast Time formula", "x >= 0 ? (2 * x) / (x + 1) : x");
                 FORMULA_RESIST_CUSTOM = BUILDER.worldRestart().define("Spell Resistance formula", "x >= 0 ? (2 * x) / (x + 1) : x");

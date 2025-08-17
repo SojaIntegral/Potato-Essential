@@ -105,7 +105,7 @@ public class RebalanceHandler {
                 case 2 -> x <= 3.433 ? 2 * (Math.sin(0.4 * (x + 0.3))) + 0.00624 : 2;
                 case 3 -> x <= 4.152 ? 2 * (Math.sin(0.28 * (x + 0.8))) + 0.034136 : 2;
                 case 4 -> x <= 7.733 ? 2 * (Math.sin(0.15 * (x + 2.46))) + 0.001736 : 2;
-                default -> x >= 0 ? 1.966667 - (30 / (29 + x)) : 2 - ((20 - x) / 20);
+                default -> x >= 0 ? 2 - (30 / (29 + x)) : 1.965517 - ((20 - x) / 20);
             };
         }
         else return customCooldownFormula(x);
@@ -115,10 +115,10 @@ public class RebalanceHandler {
             return switch (reFormula) {
                 case 0 -> x <= 1.75 ? x : 1 / (-16 * (x - 1.5)) + 2;
                 case 1 -> x <= 1.5 ? x : -.25 * (1 / (x - 1)) + 2;
-                case 2 -> x <= 3.62699 ? 2 * (Math.sin(0.4 * (x + 0.3))) + 0.00624 : 2;
-                case 3 -> x <= 4.80999 ? 2 * (Math.sin(0.28 * (x + 0.8))) + 0.034136 : 2;
-                case 4 -> x <= 8.01198 ? 2 * (Math.sin(0.15 * (x + 2.46))) + 0.001736 : 2;
-                default -> x >= 0 ? 1.966667 - (30 / (29 + x)) : 2 - ((20 - x) / 20);
+                case 2 -> x <= 3.433 ? 2 * (Math.sin(0.4 * (x + 0.3))) + 0.00624 : 2;
+                case 3 -> x <= 4.152 ? 2 * (Math.sin(0.28 * (x + 0.8))) + 0.034136 : 2;
+                case 4 -> x <= 7.733 ? 2 * (Math.sin(0.15 * (x + 2.46))) + 0.001736 : 2;
+                default -> x >= 0 ? 2 - (30 / (29 + x)) : 1.965517 - ((20 - x) / 20);
             };
         }
         else return customResistFormula(x);
@@ -128,10 +128,10 @@ public class RebalanceHandler {
             return switch (reFormula) {
                 case 0 -> x <= 1.75 ? x : 1 / (-16 * (x - 1.5)) + 2;
                 case 1 -> x <= 1.5 ? x : -.25 * (1 / (x - 1)) + 2;
-                case 2 -> x <= 3.62699 ? 2 * (Math.sin(0.4 * (x + 0.3))) + 0.00624 : 2;
-                case 3 -> x <= 4.80999 ? 2 * (Math.sin(0.28 * (x + 0.8))) + 0.034136 : 2;
-                case 4 -> x <= 8.01198 ? 2 * (Math.sin(0.15 * (x + 2.46))) + 0.001736 : 2;
-                default -> x >= 0 ? 1.966667 - (30 / (29 + x)) : 2 - ((20 - x) / 20);
+                case 2 -> x <= 3.433 ? 2 * (Math.sin(0.4 * (x + 0.3))) + 0.00624 : 2;
+                case 3 -> x <= 4.152 ? 2 * (Math.sin(0.28 * (x + 0.8))) + 0.034136 : 2;
+                case 4 -> x <= 7.733 ? 2 * (Math.sin(0.15 * (x + 2.46))) + 0.001736 : 2;
+                default -> x >= 0 ? 2 - (30 / (29 + x)) : 1.965517 - ((20 - x) / 20);
             };
         }
         else return customCastFormula(x);
