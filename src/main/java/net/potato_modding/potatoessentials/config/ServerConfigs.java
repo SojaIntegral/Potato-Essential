@@ -14,13 +14,20 @@ public class ServerConfigs {
     public static ModConfigSpec.ConfigValue<String> FORMULA_COOLDOWN_CUSTOM;
     public static ModConfigSpec.ConfigValue<Boolean> BUFF_STACKING;
     public static ModConfigSpec.ConfigValue<Boolean> BURN_REMOVE;
+    public static ModConfigSpec.ConfigValue<Boolean> JUMP_CRIT_TOGGLE;
+    public static ModConfigSpec.ConfigValue<Double> JUMP_CRIT;
 
     // Attributes config
     public static ModConfigSpec.ConfigValue<Boolean> BOSS_SWITCH;
-    public static ModConfigSpec.ConfigValue<Integer> BOSS_RESIST;
-    public static ModConfigSpec.ConfigValue<Integer> MINIBOSS_RESIST;
-    public static ModConfigSpec.ConfigValue<Integer> MOB_RESIST;
-    public static ModConfigSpec.ConfigValue<Integer> SUMMON_RESIST;
+    public static ModConfigSpec.ConfigValue<Boolean> BOSS_RESIST;
+    public static ModConfigSpec.ConfigValue<Double> BOSS_RESIST_VALUE;
+    public static ModConfigSpec.ConfigValue<Double> BOSS_LIFESTEAL;
+    public static ModConfigSpec.ConfigValue<Boolean> MINIBOSS_RESIST;
+    public static ModConfigSpec.ConfigValue<Double> MINIBOSS_RESIST_VALUE;
+    public static ModConfigSpec.ConfigValue<Boolean> MOB_RESIST;
+    public static ModConfigSpec.ConfigValue<Double> MOB_RESIST_VALUE;
+    public static ModConfigSpec.ConfigValue<Boolean> SUMMON_RESIST;
+    public static ModConfigSpec.ConfigValue<Double> SUMMON_RESIST_VALUE;
     public static ModConfigSpec.ConfigValue<Boolean> IV_SYSTEM;
     public static ModConfigSpec.ConfigValue<Integer> SHINY_CHANCE;
 
@@ -73,6 +80,14 @@ public class ServerConfigs {
                 BURN_REMOVE = BUILDER.worldRestart().define("Fire Immune doesn't burn", true);
             }
             BUILDER.pop();
+            {
+                BUILDER.push("Jump-Crit Tweaker");
+                BUILDER.comment("If this is enabled, jump-crits won't be affected by Apotheosis modifiers");
+                JUMP_CRIT_TOGGLE = BUILDER.worldRestart().define("Activate", true);
+                BUILDER.comment("Default: 0.5 (Vanilla - 1.5x damage) | Min: 0 (no bonus damage)");
+                JUMP_CRIT = BUILDER.worldRestart().define("Crit Bonus Damage", 0.5);
+            }
+            BUILDER.pop();
         }
         BUILDER.pop();
         BUILDER.push("ATTRIBUTES");
@@ -80,12 +95,12 @@ public class ServerConfigs {
             BUILDER.push("Attribute System");
             BUILDER.comment("If mobs will have random variation in their attributes (does not include players)");
             IV_SYSTEM = BUILDER.worldRestart().define("Random Attribute Variation", true);
-            BUILDER.comment("Chance for perfect attributes | 1 = 100%");
-            BUILDER.comment("4096 = 0.025% chance | Min: 1 | Max: 8192 | Default: 4096");
-            SHINY_CHANCE = BUILDER.worldRestart().define("Chance for Perfect Attributes", 4096);
             BUILDER.comment("Bonus attributes for mobs will be increased by whatever number you put here");
             BUILDER.comment("Maximum: 10000% | Minimum: 1% | Default: 15%");
             IV_RANGE = BUILDER.worldRestart().define("Attributes variance", 15);
+            BUILDER.comment("Chance for perfect attributes | 1 = 100%");
+            BUILDER.comment("4096 = 0.025% chance | Min: 1 | Max: 8192 | Default: 4096");
+            SHINY_CHANCE = BUILDER.worldRestart().define("Chance for Perfect Attributes", 4096);
             BUILDER.comment("Natures increase one attribute by 10% and reduce another by the same amount");
             BUILDER.comment("This bonus multiplies everything else, so is quite powerful");
             BUILDER.comment("WARNING: Only includes familiars by default! Add new ones via datapack");
@@ -99,18 +114,33 @@ public class ServerConfigs {
             BOSS_SWITCH = BUILDER.worldRestart().define("Automatic Rebalance", true);
             {
                 BUILDER.push("Modifiers");
-                BUILDER.comment("Only works when Automatic Rebalance is [true]");
-                BUILDER.comment("Multiplies the resistances (in %) | Default: 100% | Max: 10000%");
-                BOSS_RESIST = BUILDER.worldRestart().define("Bonus Spell Resistance for Bosses", 100);
-                BUILDER.comment("Only works when Automatic Rebalance is [true]");
-                BUILDER.comment("Multiplies the resistances (in %) | Default: 100% | Max: 10000%");
-                MINIBOSS_RESIST = BUILDER.worldRestart().define("Bonus Spell Resistance for Minibosses", 100);
-                BUILDER.comment("Only works when Automatic Rebalance is [true]");
-                BUILDER.comment("Multiplies the resistances (in %) | Default: 100% | Max: 10000%");
-                MOB_RESIST = BUILDER.worldRestart().define("Bonus Spell Resistance for Mobs", 100);
-                BUILDER.comment("Only works when Automatic Rebalance is [true]");
-                BUILDER.comment("Multiplies the resistances (in %) | Default: 100% | Max: 10000%");
-                SUMMON_RESIST = BUILDER.worldRestart().define("Bonus Spell Resistance for Summons", 100);
+                BUILDER.comment("WARNING: Only works when Automatic Rebalance is [true]");
+                BUILDER.comment("Whether these types of mobs will have bonus multiplier from formula type");
+                BUILDER.comment("Recommended to disable if custom");
+                BOSS_RESIST = BUILDER.worldRestart().define("Automatic Bosses Multiplier", true);
+                BUILDER.comment("Value used when disabled:");
+                BOSS_RESIST_VALUE = BUILDER.worldRestart().define("Manual Boss Multiplier", 1.0);
+                BUILDER.comment("Whether these types of mobs will have bonus multiplier from formula type");
+                BUILDER.comment("Recommended to disable if custom");
+                MINIBOSS_RESIST = BUILDER.worldRestart().define("Mini-Boss", true);
+                BUILDER.comment("Value used when disabled:");
+                MINIBOSS_RESIST_VALUE = BUILDER.worldRestart().define("Manual Mini-Boss Multiplier", 1.0);
+                BUILDER.comment("Whether these types of mobs will have bonus multiplier from formula type");
+                BUILDER.comment("Recommended to disable if custom");
+                MOB_RESIST = BUILDER.worldRestart().define("Regular Mobs", true);
+                BUILDER.comment("Value used when disabled:");
+                MOB_RESIST_VALUE = BUILDER.worldRestart().define("Manual Mobs Multiplier", 1.0);
+                BUILDER.comment("Whether these types of mobs will have bonus multiplier from formula type");
+                BUILDER.comment("Recommended to disable if custom");
+                SUMMON_RESIST = BUILDER.worldRestart().define("Summons", true);
+                BUILDER.comment("Value used when disabled:");
+                SUMMON_RESIST_VALUE = BUILDER.worldRestart().define("Manual Summons Multiplier", 1.0);
+                BUILDER.pop();
+            }
+            {
+                BUILDER.push("Life-Steal");
+                BUILDER.comment("Life-Steal attribute for bosses | Default: 0.75 | Set to 0 to disable");
+                BOSS_LIFESTEAL = BUILDER.worldRestart().define("Boss Life-Steal", 0.75);
                 BUILDER.pop();
             }
             BUILDER.pop();

@@ -36,13 +36,14 @@ public class ConfigFormulas {
     public static double AttackMod = 0;
 
     // These modifiers ensure that things don't get out of hand, but also aren't too easy
-    public static double boss_mod = 1.15 * modifier * Math.clamp(ServerConfigs.BOSS_RESIST.get(), 1, 10000) / 100;
-    public static double mini_mod = 1.0 * modifier * Math.clamp(ServerConfigs.MINIBOSS_RESIST.get(), 1, 10000) / 100;
-    public static double mob_mod = 0.85 * modifier * Math.clamp(ServerConfigs.MOB_RESIST.get(), 1, 10000) / 100;
-    public static double summon_mod = 0.9 * modifier * Math.clamp(ServerConfigs.SUMMON_RESIST.get(), 1, 10000) / 100;
+    public static double boss_mod = ServerConfigs.BOSS_RESIST.get() ? 1.15 * modifier : 1;
+    public static double mini_mod = ServerConfigs.MINIBOSS_RESIST.get() ? modifier : 1;
+    public static double mob_mod = ServerConfigs.MOB_RESIST.get() ? 0.85 * modifier : 1;
+    public static double summon_mod = ServerConfigs.SUMMON_RESIST.get() ? 0.9 * modifier : 1;
 
     // Familiars random attr value
-    public static double randMax = (double) Math.clamp(ServerConfigs.IV_RANGE.get(), 1, 10000) / 100;
+    public static double randMax = ServerConfigs.IV_SYSTEM.get() ?
+            (double) Math.clamp(ServerConfigs.IV_RANGE.get(), 1, 10000) / 100 : 1;
 
     public static int shinyChanceModifier = Math.clamp(ServerConfigs.SHINY_CHANCE.get(), 1, 8192);
 }

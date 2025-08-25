@@ -112,16 +112,16 @@ public class MainAttributeHandler {
         boolean isShiny = false;
         double[] attrVar = new double[10];
         // Chance for shiny & prevents shinies from losing perfect IVs
-        if (!ServerConfigs.IV_SYSTEM.get() || mob.getType().is(PotatoTags.NERFED_MOB)) {
+        if (mob.getType().is(PotatoTags.NERFED_MOB)) {
             Arrays.fill(attrVar, 0);
         }
-        else if ((ServerConfigs.IV_SYSTEM.get() && shinyAttribute())) {
+        else if (shinyAttribute()) {
             Arrays.fill(attrVar, 1 * randMax);
             isShiny = true;
         }
         // Adds + 0~15% to Familiars' attributes & can be rerolled
         // I should be able to copy this code over and make so non-shinies are rerolled
-        else if ((ServerConfigs.IV_SYSTEM.get() && !shinyAttribute()) || (ServerConfigs.IV_SYSTEM.get() && canReroll)) {
+        else if (!shinyAttribute() || canReroll) {
             for (int i = 0; i < attrVar.length; i++) {
                 attrVar[i] = Math.random() * randMax;
             }
@@ -297,7 +297,7 @@ public class MainAttributeHandler {
                 }
 
                 if (ModList.get().isLoaded("cataclysm") && mob.getType().is(PotatoTags.BOSS)) {
-                    setIfNonNull(mob, ALObjects.Attributes.LIFE_STEAL, 0.75);
+                    setIfNonNull(mob, ALObjects.Attributes.LIFE_STEAL, ServerConfigs.BOSS_LIFESTEAL.get());
                 }
             }
         }
