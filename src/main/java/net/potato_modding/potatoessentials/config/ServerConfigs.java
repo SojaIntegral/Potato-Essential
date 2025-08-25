@@ -118,22 +118,22 @@ public class ServerConfigs {
                 BUILDER.comment("Whether these types of mobs will have bonus multiplier from formula type");
                 BUILDER.comment("Recommended to disable if custom");
                 BOSS_RESIST = BUILDER.worldRestart().define("Automatic Bosses Multiplier", true);
-                BUILDER.comment("Value used when disabled:");
+                BUILDER.comment("Value used when disabled | Default: 1.0");
                 BOSS_RESIST_VALUE = BUILDER.worldRestart().define("Manual Boss Multiplier", 1.0);
                 BUILDER.comment("Whether these types of mobs will have bonus multiplier from formula type");
                 BUILDER.comment("Recommended to disable if custom");
                 MINIBOSS_RESIST = BUILDER.worldRestart().define("Mini-Boss", true);
-                BUILDER.comment("Value used when disabled:");
+                BUILDER.comment("Value used when disabled | Default: 1.0");
                 MINIBOSS_RESIST_VALUE = BUILDER.worldRestart().define("Manual Mini-Boss Multiplier", 1.0);
                 BUILDER.comment("Whether these types of mobs will have bonus multiplier from formula type");
                 BUILDER.comment("Recommended to disable if custom");
                 MOB_RESIST = BUILDER.worldRestart().define("Regular Mobs", true);
-                BUILDER.comment("Value used when disabled:");
+                BUILDER.comment("Value used when disabled | Default: 1.0");
                 MOB_RESIST_VALUE = BUILDER.worldRestart().define("Manual Mobs Multiplier", 1.0);
                 BUILDER.comment("Whether these types of mobs will have bonus multiplier from formula type");
                 BUILDER.comment("Recommended to disable if custom");
                 SUMMON_RESIST = BUILDER.worldRestart().define("Summons", true);
-                BUILDER.comment("Value used when disabled:");
+                BUILDER.comment("Value used when disabled | Default: 1.0");
                 SUMMON_RESIST_VALUE = BUILDER.worldRestart().define("Manual Summons Multiplier", 1.0);
                 BUILDER.pop();
             }

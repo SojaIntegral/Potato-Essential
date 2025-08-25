@@ -36,10 +36,10 @@ public class ConfigFormulas {
     public static double AttackMod = 0;
 
     // These modifiers ensure that things don't get out of hand, but also aren't too easy
-    public static double boss_mod = ServerConfigs.BOSS_RESIST.get() ? 1.15 * modifier : 1;
-    public static double mini_mod = ServerConfigs.MINIBOSS_RESIST.get() ? modifier : 1;
-    public static double mob_mod = ServerConfigs.MOB_RESIST.get() ? 0.85 * modifier : 1;
-    public static double summon_mod = ServerConfigs.SUMMON_RESIST.get() ? 0.9 * modifier : 1;
+    public static double boss_mod = ServerConfigs.BOSS_RESIST.get() ? 1.15 * modifier : ServerConfigs.BOSS_RESIST_VALUE.get();
+    public static double mini_mod = ServerConfigs.MINIBOSS_RESIST.get() ? modifier : ServerConfigs.MINIBOSS_RESIST_VALUE.get();
+    public static double mob_mod = ServerConfigs.MOB_RESIST.get() ? 0.85 * modifier : ServerConfigs.MOB_RESIST_VALUE.get();
+    public static double summon_mod = ServerConfigs.SUMMON_RESIST.get() ? 0.9 * modifier : ServerConfigs.SUMMON_RESIST_VALUE.get();
 
     // Familiars random attr value
     public static double randMax = ServerConfigs.IV_SYSTEM.get() ?
