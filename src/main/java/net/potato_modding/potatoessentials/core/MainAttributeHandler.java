@@ -3,6 +3,7 @@ package net.potato_modding.potatoessentials.core;
 import dev.shadowsoffire.apothic_attributes.api.ALObjects;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -12,20 +13,48 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.potato_modding.potatoessentials.tags.PotatoTags;
 import net.potato_modding.potatoessentials.config.ServerConfigs;
+import net.potato_modding.potatoessentials.datagen.MobElementLoader;
+import net.potato_modding.potatoessentials.datagen.MobRaceLoader;
 import net.potato_modding.potatoessentials.registry.PotatoEssentialsAttributes;
+import net.potato_modding.potatoessentials.tags.PotatoTags;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static net.potato_modding.potatoessentials.PotatoEssentials.MOD_ID;
 import static net.potato_modding.potatoessentials.utils.ConfigFormulas.*;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "deprecation"})
 @EventBusSubscriber
 public class MainAttributeHandler {
+
+
+
+    private static double SpellPower;
+    private static double CastReduction;
+    private static double Resist;
+    private static double NeutralRes;
+    private static double WaterRes;
+    private static double EarthRes;
+    private static double FireRes;
+    private static double WindRes;
+    private static double EldritchRes;
+    private static double HolyRes;
+    private static double BloodRes;
+    private static double SoulRes;
+    private static double EnderRes;
+    private static double Armor;
+    private static double Tough;
+    private static double Attack;
+    private static double ArmorPierce;
+    private static double ArmorShred;
+    private static double ProtPierce;
+    private static double ProtShred;
+    private static double CritDmg;
+    private static double Crit;
 
     private static void setIfNonNull(LivingEntity entity, Holder<Attribute> attribute, double value) {
         var instance = entity.getAttributes().getInstance(attribute);
@@ -46,7 +75,6 @@ public class MainAttributeHandler {
             instance.addPermanentModifier(new AttributeModifier(id, value, AttributeModifier.Operation.ADD_VALUE));
         }
     }
-
 
     // Add modifier (multiplied base)
     private static void multiplyModifierIfValid(LivingEntity entity, Holder<Attribute> attribute, double value, String idName) {
@@ -84,18 +112,19 @@ public class MainAttributeHandler {
         boolean isShiny = false;
         double[] attrVar = new double[10];
         // Chance for shiny & prevents shinies from losing perfect IVs
-        if ((ServerConfigs.IV_SYSTEM.get() && shinyAttribute())) {
+        if (!ServerConfigs.IV_SYSTEM.get() || mob.getType().is(PotatoTags.NERFED_MOB)) {
+            Arrays.fill(attrVar, 0);
+        }
+        else if ((ServerConfigs.IV_SYSTEM.get() && shinyAttribute())) {
             Arrays.fill(attrVar, 1 * randMax);
             isShiny = true;
         }
         // Adds + 0~15% to Familiars' attributes & can be rerolled
         // I should be able to copy this code over and make so non-shinies are rerolled
-        else if ((ServerConfigs.IV_SYSTEM.get() && !shinyAttribute()) || canReroll) {
+        else if ((ServerConfigs.IV_SYSTEM.get() && !shinyAttribute()) || (ServerConfigs.IV_SYSTEM.get() && canReroll)) {
             for (int i = 0; i < attrVar.length; i++) {
                 attrVar[i] = Math.random() * randMax;
             }
-        } else if (!ServerConfigs.IV_SYSTEM.get() || mob.getType().is(PotatoTags.RACE_PLAYER)) {
-            Arrays.fill(attrVar, 0);
         }
 
         // Checks if the mob has a valid modifier from here
@@ -138,478 +167,63 @@ public class MainAttributeHandler {
                 AttackMod = 1;
             }
 
-            if (mob.getType().is(PotatoTags.RACE_PLAYER)) {
-                Attack = 0 * AttackMod;
-                Armor = 0 * ArmorMod;
-                Tough = 0 * ToughMod;
-                SpellPower = 1;
-                CastReduction = 1;
-                Resist = 1;
-                NeutralRes = 1;
-                WaterRes = 1;
-                EarthRes = 1;
-                FireRes = 1;
-                WindRes = 1;
-                BloodRes = 1;
-                HolyRes = 1;
-                EldritchRes = 1;
-                SoulRes = 1;
-                EnderRes = 1;
-                ArmorPierce = 0;
-                ArmorShred = 0;
-                ProtPierce = 0;
-                ProtShred = 0;
-                CritDmg = 0;
-                Crit = 0;
-            }
+            mob.getType().builtInRegistryHolder().tags().forEach(tagKey -> {
+                if (tagKey.registry().equals(Registries.ENTITY_TYPE) &&
+                        tagKey.location().getNamespace().equals(MOD_ID) &&
+                        tagKey.location().getPath().startsWith("mob_races/")) {
 
-            // Type Modifiers
-            if (mob.getType().is(PotatoTags.RACE_HUMAN)) {
-                Attack = 0 * AttackMod;
-                Armor = 0 * ArmorMod;
-                Tough = 0 * ToughMod;
-                SpellPower = 1 + attrVar[2];
-                CastReduction = 1 + attrVar[3];
-                Resist = 1 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 1 + attrVar[4];
-                EarthRes = 1 + attrVar[4];
-                FireRes = 1 + attrVar[4];
-                WindRes = 1 + attrVar[4];
-                BloodRes = 1 + attrVar[4];
-                HolyRes = 1 + attrVar[4];
-                EldritchRes = 1 + attrVar[4];
-                SoulRes = 1 + attrVar[4];
-                EnderRes = 1 + attrVar[4];
-                ArmorPierce = 0.5 * (1 + attrVar[5]);
-                ArmorShred = 0.05 * (1 + attrVar[5]);
-                ProtPierce = 0.5 * (1 + attrVar[6]);
-                ProtShred = 0.05 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.05;
-                Crit = attrVar[7] - 0.025;
-            }
-            if (mob.getType().is(PotatoTags.RACE_UNDEAD)) {
-                Attack = 1.5 * AttackMod;
-                Armor = 2.5 * ArmorMod;
-                Tough = 1.5 * ToughMod;
-                SpellPower = 1.2 + attrVar[2];
-                CastReduction = 0.9 + attrVar[3];
-                Resist = 1.1 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 1.1 + attrVar[4];
-                EarthRes = 1.1 + attrVar[4];
-                FireRes = 0.9 + attrVar[4];
-                WindRes = 1 + attrVar[4];
-                BloodRes = 1.15 + attrVar[4];
-                HolyRes = 0.85 + attrVar[4];
-                EldritchRes = 1.2 + attrVar[4];
-                SoulRes = 1.15 + attrVar[4];
-                EnderRes = 1.05 + attrVar[4];
-                ArmorPierce = 2 * (1 + attrVar[5]);
-                ArmorShred = 0.15 * (1 + attrVar[5]);
-                ProtPierce = 2 * (1 + attrVar[6]);
-                ProtShred = 0.1 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.15;
-                Crit = attrVar[7];
-            }
-            if (mob.getType().is(PotatoTags.RACE_HUMANOID)) {
-                Attack = 2 * AttackMod;
-                Armor = 2 * ArmorMod;
-                Tough = 2 * ToughMod;
-                SpellPower = 1.15 + attrVar[2];
-                CastReduction = 1.15 + attrVar[3];
-                Resist = 1.05 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 1.05 + attrVar[4];
-                EarthRes = 1.05 + attrVar[4];
-                FireRes = 0.95 + attrVar[4];
-                WindRes = 1 + attrVar[4];
-                BloodRes = 0.9 + attrVar[4];
-                HolyRes = 1.15 + attrVar[4];
-                EldritchRes = 0.85 + attrVar[4];
-                SoulRes = 0.95 + attrVar[4];
-                EnderRes = 1 + attrVar[4];
-                ArmorPierce = 3 * (1 + attrVar[5]);
-                ArmorShred = 0.2 * (1 + attrVar[5]);
-                ProtPierce = 1.5 * (1 + attrVar[6]);
-                ProtShred = 0.1 * (1 + attrVar[6]);
-                CritDmg = attrVar[7];
-                Crit = attrVar[7] - 0.05;
-            }
-            if (mob.getType().is(PotatoTags.RACE_BRUTE)) {
-                Attack = 3 * AttackMod;
-                Armor = 3 * ArmorMod;
-                Tough = 3 * ToughMod;
-                SpellPower = 1 + attrVar[2];
-                CastReduction = 0.9 + attrVar[3];
-                Resist = 0.9 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 1.1 + attrVar[4];
-                EarthRes = 1.1 + attrVar[4];
-                FireRes = 0.9 + attrVar[4];
-                WindRes = 1 + attrVar[4];
-                BloodRes = 0.95 + attrVar[4];
-                HolyRes = 1.05 + attrVar[4];
-                EldritchRes = 0.9 + attrVar[4];
-                SoulRes = 0.9 + attrVar[4];
-                EnderRes = 1 + attrVar[4];
-                ArmorPierce = 5 * (1 + attrVar[5]);
-                ArmorShred = 0.1 * (1 + attrVar[5]);
-                ProtPierce = 1 * (1 + attrVar[6]);
-                ProtShred = 0.15 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.15;
-                Crit = attrVar[7] + 0.05;
-            }
-            if (mob.getType().is(PotatoTags.RACE_INSECT)) {
-                Attack = 1 * AttackMod;
-                Armor = 1 * ArmorMod;
-                Tough = 2 * ToughMod;
-                SpellPower = 0.9 + attrVar[2];
-                CastReduction = 1 + attrVar[3];
-                Resist = 0.95 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 1.1 + attrVar[4];
-                EarthRes = 1.1 + attrVar[4];
-                FireRes = 0.85 + attrVar[4];
-                WindRes = 1.05 + attrVar[4];
-                BloodRes = 1.05 + attrVar[4];
-                HolyRes = 1 + attrVar[4];
-                EldritchRes = 1.15 + attrVar[4];
-                SoulRes = 1.1 + attrVar[4];
-                EnderRes = 1.05 + attrVar[4];
-                ArmorPierce = 1 * (1 + attrVar[5]);
-                ArmorShred = 0.25 * (1 + attrVar[5]);
-                ProtPierce = 1 * (1 + attrVar[6]);
-                ProtShred = 0.15 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.35;
-                Crit = attrVar[7] + 0.25;
-            }
-            if (mob.getType().is(PotatoTags.RACE_FLYING)) {
-                Attack = 1.5 * AttackMod;
-                Armor = 1 * ArmorMod;
-                Tough = 0 * ToughMod;
-                SpellPower = 0.95 + attrVar[2];
-                CastReduction = 1.25 + attrVar[3];
-                Resist = 0.95 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 0.9 + attrVar[4];
-                EarthRes = 0.85 + attrVar[4];
-                FireRes = 0.95 + attrVar[4];
-                WindRes = 1.15 + attrVar[4];
-                BloodRes = 0.9 + attrVar[4];
-                HolyRes = 1.1 + attrVar[4];
-                EldritchRes = 1 + attrVar[4];
-                SoulRes = 1 + attrVar[4];
-                EnderRes = 1 + attrVar[4];
-                ArmorPierce = 1 * (1 + attrVar[5]);
-                ArmorShred = 0.1 * (1 + attrVar[5]);
-                ProtPierce = 1 * (1 + attrVar[6]);
-                ProtShred = 0.1 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.25;
-                Crit = attrVar[7] + 0.35;
-            }
-            if (mob.getType().is(PotatoTags.RACE_GOLEM)) {
-                Attack = 3.5 * AttackMod;
-                Armor = 5 * ArmorMod;
-                Tough = 5 * ToughMod;
-                SpellPower = 1.15 + attrVar[2];
-                CastReduction = 0.8 + attrVar[3];
-                Resist = 1.15 + attrVar[4];
-                NeutralRes = 1.1 + attrVar[4];
-                WaterRes = 1.1 + attrVar[4];
-                EarthRes = 1.1 + attrVar[4];
-                FireRes = 1.1 + attrVar[4];
-                WindRes = 1.1 + attrVar[4];
-                BloodRes = 1.25 + attrVar[4];
-                HolyRes = 0.9 + attrVar[4];
-                EldritchRes = 0.9 + attrVar[4];
-                SoulRes = 1.15 + attrVar[4];
-                EnderRes = 0.8 + attrVar[4];
-                ArmorPierce = 3 * (1 + attrVar[5]);
-                ArmorShred = 0.15 * (1 + attrVar[5]);
-                ProtPierce = 1 * (1 + attrVar[6]);
-                ProtShred = 0.15 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] + 0.15;
-                Crit = attrVar[7] - 0.1;
-            }
-            if (mob.getType().is(PotatoTags.RACE_CONSTRUCT)) {
-                Attack = 4 * AttackMod;
-                Armor = 4 * ArmorMod;
-                Tough = 5 * ToughMod;
-                SpellPower = 0.8 + attrVar[2];
-                CastReduction = 1.5 + attrVar[3];
-                Resist = 1.1 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 1 + attrVar[4];
-                EarthRes = 1 + attrVar[4];
-                FireRes = 1 + attrVar[4];
-                WindRes = 1 + attrVar[4];
-                BloodRes = 1.15 + attrVar[4];
-                HolyRes = 0.95 + attrVar[4];
-                EldritchRes = 0.95 + attrVar[4];
-                SoulRes = 1.05 + attrVar[4];
-                EnderRes = 1.2 + attrVar[4];
-                ArmorPierce = 2 * (1 + attrVar[5]);
-                ArmorShred = 0.2 * (1 + attrVar[5]);
-                ProtPierce = 2 * (1 + attrVar[6]);
-                ProtShred = 0.2 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.3;
-                Crit = attrVar[7] + 1;
-            }
-            if (mob.getType().is(PotatoTags.RACE_FISH)) {
-                Attack = 2 * AttackMod;
-                Armor = 3 * ArmorMod;
-                Tough = 1.5 * ToughMod;
-                SpellPower = 0.95 + attrVar[2];
-                CastReduction = 1.2 + attrVar[3];
-                Resist = 0.9 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 1.2 + attrVar[4];
-                EarthRes = 1.05 + attrVar[4];
-                FireRes = 1.15 + attrVar[4];
-                WindRes = 0.85 + attrVar[4];
-                BloodRes = 0.9 + attrVar[4];
-                HolyRes = 1.05 + attrVar[4];
-                EldritchRes = 1.05 + attrVar[4];
-                SoulRes = 1.05 + attrVar[4];
-                EnderRes = 1.05 + attrVar[4];
-                ArmorPierce = 1.5 * (1 + attrVar[5]);
-                ArmorShred = 0.15 * (1 + attrVar[5]);
-                ProtPierce = 1.5 * (1 + attrVar[6]);
-                ProtShred = 0.15 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.075;
-                Crit = attrVar[7] - 0.05;
-            }
-            if (mob.getType().is(PotatoTags.RACE_SPIRIT)) {
-                Attack = 1 * AttackMod;
-                Armor = 0 * ArmorMod;
-                Tough = 0 * ToughMod;
-                SpellPower = 1.25 + attrVar[2];
-                CastReduction = 1.25 + attrVar[3];
-                Resist = 1.2 + attrVar[4];
-                NeutralRes = 1 + attrVar[4];
-                WaterRes = 1.1 + attrVar[4];
-                EarthRes = 1.1 + attrVar[4];
-                FireRes = 1.1 + attrVar[4];
-                WindRes = 1.1 + attrVar[4];
-                BloodRes = 0.95 + attrVar[4];
-                HolyRes = 1.2 + attrVar[4];
-                EldritchRes = 0.9 + attrVar[4];
-                SoulRes = 0.95 + attrVar[4];
-                EnderRes = 0.95 + attrVar[4];
-                ArmorPierce = 3 * (1 + attrVar[5]);
-                ArmorShred = 0.25 * (1 + attrVar[5]);
-                ProtPierce = 3 * (1 + attrVar[6]);
-                ProtShred = 0.25 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.4;
-                Crit = attrVar[7] - 0.1;
-            }
-            if (mob.getType().is(PotatoTags.RACE_AMORPH)) {
-                Attack = 2.5 * AttackMod;
-                Armor = 2.5 * ArmorMod;
-                Tough = 2.5 * ToughMod;
-                SpellPower = 1.05 + attrVar[2];
-                CastReduction = 1.05 + attrVar[3];
-                Resist = 1.15 + attrVar[4];
-                NeutralRes = 1.05 + attrVar[4];
-                WaterRes = 1.05 + attrVar[4];
-                EarthRes = 1.05 + attrVar[4];
-                FireRes = 1.05 + attrVar[4];
-                WindRes = 1.05 + attrVar[4];
-                BloodRes = 1.05 + attrVar[4];
-                HolyRes = 1.05 + attrVar[4];
-                EldritchRes = 1.05 + attrVar[4];
-                SoulRes = 1.05 + attrVar[4];
-                EnderRes = 1.05 + attrVar[4];
-                ArmorPierce = 1 * (1 + attrVar[5]);
-                ArmorShred = 0.1 * (1 + attrVar[5]);
-                ProtPierce = 2 * (1 + attrVar[6]);
-                ProtShred = 0.15 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] + 0.05;
-                Crit = attrVar[7] + 0.1;
-            }
-            if (mob.getType().is(PotatoTags.RACE_DRAGONBORN)) {
-                Attack = 1 * AttackMod;
-                Armor = 2 * ArmorMod;
-                Tough = 1 * ToughMod;
-                SpellPower = 1.15 + attrVar[2];
-                CastReduction = 1.05 + attrVar[3];
-                Resist = 1.1 + attrVar[4];
-                NeutralRes = 1.1 + attrVar[4];
-                WaterRes = 1.05 + attrVar[4];
-                EarthRes = 1.05 + attrVar[4];
-                FireRes = 1.05 + attrVar[4];
-                WindRes = 1.05 + attrVar[4];
-                BloodRes = 0.95 + attrVar[4];
-                HolyRes = 0.95 + attrVar[4];
-                EldritchRes = 0.95 + attrVar[4];
-                SoulRes = 0.95 + attrVar[4];
-                EnderRes = 1 + attrVar[4];
-                ArmorPierce = 0 * (1 + attrVar[5]);
-                ArmorShred = 0 * (1 + attrVar[5]);
-                ProtPierce = 0 * (1 + attrVar[6]);
-                ProtShred = 0 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.2;
-                Crit = attrVar[7] - 0.15;
-            }
-            if (mob.getType().is(PotatoTags.RACE_DRAGON)) {
-                Attack = 5 * AttackMod;
-                Armor = 5 * ArmorMod;
-                Tough = 5 * ToughMod;
-                SpellPower = 1.3 + attrVar[2];
-                CastReduction = 1.2 + attrVar[3];
-                Resist = 1.2 + attrVar[4];
-                NeutralRes = 1.1 + attrVar[4];
-                WaterRes = 1.1 + attrVar[4];
-                EarthRes = 1.1 + attrVar[4];
-                FireRes = 1.1 + attrVar[4];
-                WindRes = 1.1 + attrVar[4];
-                BloodRes = 0.95 + attrVar[4];
-                HolyRes = 0.95 + attrVar[4];
-                EldritchRes = 0.9 + attrVar[4];
-                SoulRes = 0.9 + attrVar[4];
-                EnderRes = 1.05 + attrVar[4];
-                ArmorPierce = 0 * (1 + attrVar[5]);
-                ArmorShred = 0 * (1 + attrVar[5]);
-                ProtPierce = 2 * (1 + attrVar[6]);
-                ProtShred = 0.2 * (1 + attrVar[6]);
-                CritDmg = attrVar[7] - 0.2;
-                Crit = attrVar[7] - 0.075;
-            }
+                    String raceName = tagKey.location().getPath().substring("mob_races/".length());
+                    ResourceLocation dataId = ResourceLocation.fromNamespaceAndPath(MOD_ID, raceName);
+                    var data = MobRaceLoader.get(dataId);
 
-            // School Modifiers
-            if (mob.getType().is(PotatoTags.TYPE_NEUTRAL)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 1 * mobType;
-                EarthRes *= 1 * mobType;
-                FireRes *= 1 * mobType;
-                WindRes *= 1 * mobType;
-                BloodRes *= 1 * mobType;
-                HolyRes *= 1 * mobType;
-                EldritchRes *= 1 * mobType;
-                SoulRes *= 1.1 * mobType;
-                EnderRes *= 1 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_WATER)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 1.6 * mobType;
-                EarthRes *= 1 * mobType;
-                FireRes *= 1.1 * mobType;
-                WindRes *= 0.55 * mobType;
-                BloodRes *= 0.55 * mobType;
-                HolyRes *= 1 * mobType;
-                EldritchRes *= 1 * mobType;
-                SoulRes *= 1 * mobType;
-                EnderRes *= 1 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_EARTH)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 1 * mobType;
-                EarthRes *= 1.6 * mobType;
-                FireRes *= 0.55 * mobType;
-                WindRes *= 1.1 * mobType;
-                BloodRes *= 0.55 * mobType;
-                HolyRes *= 1 * mobType;
-                EldritchRes *= 1 * mobType;
-                SoulRes *= 1 * mobType;
-                EnderRes *= 1 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_FIRE)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 0.55 * mobType;
-                EarthRes *= 1.1 * mobType;
-                FireRes *= 1.6 * mobType;
-                WindRes *= 1 * mobType;
-                BloodRes *= 0.55 * mobType;
-                HolyRes *= 1 * mobType;
-                EldritchRes *= 1 * mobType;
-                SoulRes *= 1.1 * mobType;
-                EnderRes *= 1 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_WIND)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 1.1 * mobType;
-                EarthRes *= 0.55 * mobType;
-                FireRes *= 1 * mobType;
-                WindRes *= 1.6 * mobType;
-                BloodRes *= 0.55 * mobType;
-                HolyRes *= 1 * mobType;
-                EldritchRes *= 1 * mobType;
-                SoulRes *= 1 * mobType;
-                EnderRes *= 1 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_BLOOD)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 0.55 * mobType;
-                EarthRes *= 0.55 * mobType;
-                FireRes *= 0.55 * mobType;
-                WindRes *= 0.55 * mobType;
-                BloodRes *= 2 * mobType;
-                HolyRes *= 1.2 * mobType;
-                EldritchRes *= 1.2 * mobType;
-                SoulRes *= 1.2 * mobType;
-                EnderRes *= 1.2 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_HOLY)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 1 * mobType;
-                EarthRes *= 1 * mobType;
-                FireRes *= 1 * mobType;
-                WindRes *= 1 * mobType;
-                BloodRes *= 1.2 * mobType;
-                HolyRes *= 2 * mobType;
-                EldritchRes *= 0.8 * mobType;
-                SoulRes *= 1.1 * mobType;
-                EnderRes *= 0.8 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_ELDRITCH)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 1 * mobType;
-                EarthRes *= 1 * mobType;
-                FireRes *= 1 * mobType;
-                WindRes *= 1 * mobType;
-                BloodRes *= 1.2 * mobType;
-                HolyRes *= 0.8 * mobType;
-                EldritchRes *= 2 * mobType;
-                SoulRes *= 1.1 * mobType;
-                EnderRes *= 1 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_SOUL)) {
-                Resist *= mobType;
-                NeutralRes *= 1.1 * mobType;
-                WaterRes *= 1 * mobType;
-                EarthRes *= 1 * mobType;
-                FireRes *= 1 * mobType;
-                WindRes *= 1 * mobType;
-                BloodRes *= 1.2 * mobType;
-                HolyRes *= 1 * mobType;
-                EldritchRes *= 1 * mobType;
-                SoulRes *= 0.8 * mobType;
-                EnderRes *= 1 * mobType;
-            }
-            if (mob.getType().is(PotatoTags.TYPE_ENDER)) {
-                Resist *= mobType;
-                NeutralRes *= 1 * mobType;
-                WaterRes *= 1 * mobType;
-                EarthRes *= 1 * mobType;
-                FireRes *= 0.8 * mobType;
-                WindRes *= 1 * mobType;
-                BloodRes *= 1.2 * mobType;
-                HolyRes *= 0.8 * mobType;
-                EldritchRes *= 1 * mobType;
-                SoulRes *= 1 * mobType;
-                EnderRes *= 2 * mobType;
-            }
+                    Attack = data.attack() * AttackMod;
+                    Armor = data.armor() * ArmorMod;
+                    Tough = data.tough() * ToughMod;
+                    SpellPower = data.spellPower() + attrVar[2];
+                    CastReduction = data.castReduction() + attrVar[3];
+                    Resist = data.resist() + attrVar[4];
+                    NeutralRes = data.neutralRes() + attrVar[4];
+                    WaterRes = data.waterRes() + attrVar[4];
+                    EarthRes = data.earthRes() + attrVar[4];
+                    FireRes = data.fireRes() + attrVar[4];
+                    WindRes = data.windRes() + attrVar[4];
+                    BloodRes = data.bloodRes() + attrVar[4];
+                    HolyRes = data.holyRes() + attrVar[4];
+                    EldritchRes = data.eldritchRes() + attrVar[4];
+                    SoulRes = data.soulRes() + attrVar[4];
+                    EnderRes = data.enderRes() + attrVar[4];
+                    ArmorPierce = data.armorPierce() * (1 + attrVar[5]);
+                    ArmorShred = data.armorShred() * (1 + attrVar[5]);
+                    ProtPierce = data.protPierce() * (1 + attrVar[6]);
+                    ProtShred = data.protShred() * (1 + attrVar[6]);
+                    CritDmg = data.critDmg() + attrVar[7];
+                    Crit = data.crit() + attrVar[7];
+                }
+            });
 
-            // Updates mob attributes after rounding it up to 2 decimals
+            mob.getType().builtInRegistryHolder().tags().forEach(tagKey -> {
+                if (tagKey.registry().equals(Registries.ENTITY_TYPE)
+                        && tagKey.location().getNamespace().equals(MOD_ID)
+                        && tagKey.location().getPath().startsWith("mob_elements/")) {
+
+                    String elementName = tagKey.location().getPath().substring("mob_elements/".length());
+                    ResourceLocation dataId = ResourceLocation.fromNamespaceAndPath(MOD_ID, elementName);
+                    var data = MobElementLoader.get(dataId);
+
+                    Resist *= data.resist() * mobType;
+                    NeutralRes *= data.neutralRes() * mobType;
+                    WaterRes *= data.waterRes() * mobType;
+                    EarthRes *= data.earthRes() * mobType;
+                    FireRes *= data.fireRes() * mobType;
+                    WindRes *= data.windRes() * mobType;
+                    BloodRes *= data.bloodRes() * mobType;
+                    HolyRes *= data.holyRes() * mobType;
+                    EldritchRes *= data.eldritchRes() * mobType;
+                    SoulRes *= data.soulRes() * mobType;
+                    EnderRes *= data.enderRes() * mobType;
+                }
+            });
+
             {
                 if (attrVar[0] == 1 && attrVar[1] == 1 && attrVar[2] == 1 && attrVar[3] == 1 &&
                         attrVar[4] == 1 && attrVar[5] == 1 && attrVar[6] == 1 && attrVar[7] == 1) {
@@ -620,6 +234,7 @@ public class MainAttributeHandler {
                     addModifierIfValid(mob, PotatoEssentialsAttributes.SHINY, 1, "shiny");
                 }
                 addModifierIfValid(mob, Attributes.ATTACK_DAMAGE, BigDecimal.valueOf(Attack).setScale(2, RoundingMode.HALF_UP).doubleValue(), "attack");
+
                 addModifierIfValid(mob, Attributes.ARMOR, BigDecimal.valueOf(Armor).setScale(2, RoundingMode.HALF_UP).doubleValue(), "armor");
                 addModifierIfValid(mob, Attributes.ARMOR_TOUGHNESS, BigDecimal.valueOf(Tough).setScale(2, RoundingMode.HALF_UP).doubleValue(), "toughness");
 
@@ -666,10 +281,11 @@ public class MainAttributeHandler {
                 addModifierIfValid(mob, ALObjects.Attributes.ARMOR_SHRED, BigDecimal.valueOf(ArmorShred).setScale(4, RoundingMode.HALF_UP).doubleValue(), "armor_shred");
                 addModifierIfValid(mob, ALObjects.Attributes.PROT_PIERCE, BigDecimal.valueOf(ProtPierce).setScale(4, RoundingMode.HALF_UP).doubleValue(), "protection_pierce");
                 addModifierIfValid(mob, ALObjects.Attributes.PROT_SHRED, BigDecimal.valueOf(ProtShred).setScale(4, RoundingMode.HALF_UP).doubleValue(), "protection_shred");
+
                 addModifierIfValid(mob, ALObjects.Attributes.CRIT_CHANCE, BigDecimal.valueOf(Crit).setScale(4, RoundingMode.HALF_UP).doubleValue(), "critical_chance");
                 addModifierIfValid(mob, ALObjects.Attributes.CRIT_DAMAGE, BigDecimal.valueOf(CritDmg).setScale(4, RoundingMode.HALF_UP).doubleValue(), "critical_damage");
 
-                if (ServerConfigs.IV_SYSTEM.get()) {
+                if (ServerConfigs.IV_SYSTEM.get() && !mob.getType().is(PotatoTags.NERFED_MOB)) {
                     addModifierIfValid(mob, PotatoEssentialsAttributes.ATTACK_IV, attrVar[0], "iv");
                     addModifierIfValid(mob, PotatoEssentialsAttributes.ARMOR_IV, attrVar[1], "iv");
                     addModifierIfValid(mob, PotatoEssentialsAttributes.POWER_IV, attrVar[2], "iv");
@@ -686,27 +302,4 @@ public class MainAttributeHandler {
             }
         }
     }
-
-    private static double SpellPower = 0;
-    private static double CastReduction = 0;
-    private static double Resist = 0;
-    private static double NeutralRes = 0;
-    private static double WaterRes = 0;
-    private static double EarthRes = 0;
-    private static double FireRes = 0;
-    private static double WindRes = 0;
-    private static double EldritchRes = 0;
-    private static double HolyRes = 0;
-    private static double BloodRes = 0;
-    private static double SoulRes = 0;
-    private static double EnderRes = 0;
-    private static double Armor = 0;
-    private static double Tough = 0;
-    private static double Attack = 0;
-    private static double ArmorPierce = 0;
-    private static double ArmorShred = 0;
-    private static double ProtPierce = 0;
-    private static double ProtShred = 0;
-    private static double CritDmg = 0;
-    private static double Crit = 0;
 }

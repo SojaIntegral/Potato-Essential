@@ -1,0 +1,13 @@
+{
+  "resist": 1,
+  "neutralRes": 1,
+  "waterRes": 1.1,
+  "earthRes": 0.55,
+  "fireRes": 1,
+  "windRes": 1.6,
+  "bloodRes": 0.55,
+  "holyRes": 1,
+  "eldritchRes": 1,
+  "soulRes": 1,
+  "enderRes": 1
+}

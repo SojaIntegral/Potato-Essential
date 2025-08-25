@@ -5,7 +5,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.potato_modding.potatoessentials.PotatoEssentials;
-import net.potato_modding.potatospells.PotatoSpells;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class PotatoTags {
@@ -27,9 +29,12 @@ public class PotatoTags {
             TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "rank/summon"));
     public static final TagKey<EntityType<?>> PLAYER =
             TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "rank/player"));
+    public static final TagKey<EntityType<?>> NERFED_MOB =
+            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "rank/disabled_iv"));
 
     // Mobs elements
     // Base
+    /*
     public static final TagKey<EntityType<?>> TYPE_NEUTRAL =
             TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_neutral"));
     public static final TagKey<EntityType<?>> TYPE_WATER =
@@ -80,8 +85,11 @@ public class PotatoTags {
             TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/dragonborn"));
     public static final TagKey<EntityType<?>> RACE_PLAYER =
             TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/player"));
+     */
+
+    public static final Map<String, TagKey<?>> DYNAMIC_RACES = new HashMap<>();
 
     public static final TagKey<EntityType<?>> CRASH_FIX =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoSpells.MOD_ID, "crash_fix/culprits"));
+            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "crash_fix/culprits"));
 
 }

@@ -22,7 +22,11 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.potato_modding.potatoessentials.config.ServerConfigs;
+import net.potato_modding.potatoessentials.datagen.MobElementLoader;
+import net.potato_modding.potatoessentials.datagen.MobRaceLoader;
 import net.potato_modding.potatoessentials.registry.PotatoEssentialsAttributes;
+import net.potato_modding.potatoessentials.tags.DynamicElements;
+import net.potato_modding.potatoessentials.tags.DynamicRaces;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -45,6 +49,7 @@ public class PotatoEssentials {
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.addListener(this::onReloadListeners);
 
         // Register the item to spawn_armor.json creative tab
         PotatoEssentialsAttributes.register(modEventBus);
@@ -64,6 +69,10 @@ public class PotatoEssentials {
     }
 
     private void onReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(new MobRaceLoader());
+        event.addListener(new MobElementLoader());
+        event.addListener(new DynamicRaces());
+        event.addListener(new DynamicElements());
     }
 
 

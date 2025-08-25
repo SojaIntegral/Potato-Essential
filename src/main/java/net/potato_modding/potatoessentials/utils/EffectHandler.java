@@ -30,14 +30,10 @@ public class EffectHandler {
             BuiltInRegistries.MOB_EFFECT.getTags().forEach(tagPair -> {
                 var tagKey = tagPair.getFirst();
                 var tagPath = tagKey.location().getPath();
-                //System.out.println("Checking tags");
 
-                // Only handle tags in replaced_effects/
                 if (!tagPath.startsWith("effect_replacing/replaced_effects/")) return;
-                //System.out.println("Folder check");
 
                 String tagName = tagPath.substring("effect_replacing/replaced_effects/".length());
-                //System.out.println("Checked tags");
 
                 // Registers any new tags in the target folders
                 var checkTag = TagKey.create(Registries.MOB_EFFECT,
