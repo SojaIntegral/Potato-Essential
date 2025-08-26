@@ -45,15 +45,11 @@ public class PotatoEssentials {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
 
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.addListener(this::onReloadListeners);
 
-        // Register the item to spawn_armor.json creative tab
         PotatoEssentialsAttributes.register(modEventBus);
-        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfigs.BUILDING, String.format("%s-server.toml", PotatoEssentials.MOD_ID));
+        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfigs.BUILDING, MOD_ID + "-server.toml");
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

@@ -14,7 +14,7 @@ import java.util.Map;
 public class MobRaceLoader extends SimpleJsonResourceReloadListener {
 
     private static final Gson GSON = new GsonBuilder().create();
-    private static final Map<ResourceLocation, MobRaceData> DATA = new HashMap<>();
+    public static final Map<ResourceLocation, MobRaceData> DATA = new HashMap<>();
 
     public record MobRaceData(
             double attack,
@@ -50,7 +50,14 @@ public class MobRaceLoader extends SimpleJsonResourceReloadListener {
                          ResourceManager resourceManager,
                          ProfilerFiller profiler) {
         DATA.clear();
-        jsons.forEach((id, json) -> DATA.put(id, GSON.fromJson(json, MobRaceData.class)));
+        jsons.forEach((id, json) -> {
+            try {
+                DATA.put(id, GSON.fromJson(json, MobRaceLoader.MobRaceData.class));
+            } catch (Exception e) {
+                System.err.println("[MobElementLoader] Failed to parse JSON for " + id);
+                e.printStackTrace();
+            }
+        });
 
         System.out.println("Available keys: " + MobRaceLoader.DATA.keySet());
     }
@@ -59,7 +66,7 @@ public class MobRaceLoader extends SimpleJsonResourceReloadListener {
         return DATA.getOrDefault(id, defaultValues());
     }
 
-    private static MobRaceData defaultValues() {
+    public static MobRaceData defaultValues() {
         return new MobRaceData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
     }
 }

@@ -6,9 +6,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.potato_modding.potatoessentials.PotatoEssentials;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @SuppressWarnings("unused")
 public class PotatoTags {
 
@@ -31,63 +28,6 @@ public class PotatoTags {
             TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "rank/player"));
     public static final TagKey<EntityType<?>> NERFED_MOB =
             TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "rank/disabled_iv"));
-
-    // Mobs elements
-    // Base
-    /*
-    public static final TagKey<EntityType<?>> TYPE_NEUTRAL =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_neutral"));
-    public static final TagKey<EntityType<?>> TYPE_WATER =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_water"));
-    public static final TagKey<EntityType<?>> TYPE_EARTH =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_earth"));
-    public static final TagKey<EntityType<?>> TYPE_FIRE =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_fire"));
-    public static final TagKey<EntityType<?>> TYPE_WIND =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_wind"));
-    public static final TagKey<EntityType<?>> TYPE_ELDRITCH =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_eldritch"));
-    public static final TagKey<EntityType<?>> TYPE_HOLY =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_holy"));
-    public static final TagKey<EntityType<?>> TYPE_BLOOD =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_blood"));
-    public static final TagKey<EntityType<?>> TYPE_SOUL =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_soul"));
-    public static final TagKey<EntityType<?>> TYPE_ENDER =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "elemental_system/type_ender"));
-
-    // Races
-    public static final TagKey<EntityType<?>> RACE_HUMAN =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/human"));
-    public static final TagKey<EntityType<?>> RACE_HUMANOID =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/humanoid"));
-    public static final TagKey<EntityType<?>> RACE_UNDEAD =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/undead"));
-    public static final TagKey<EntityType<?>> RACE_BRUTE =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/brute"));
-    public static final TagKey<EntityType<?>> RACE_INSECT =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/insect"));
-    public static final TagKey<EntityType<?>> RACE_FLYING =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/flying"));
-    public static final TagKey<EntityType<?>> RACE_GOLEM =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/golem"));
-    public static final TagKey<EntityType<?>> RACE_CONSTRUCT =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/construct"));
-    public static final TagKey<EntityType<?>> RACE_FISH =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/fish"));
-    public static final TagKey<EntityType<?>> RACE_SPIRIT =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/spirit"));
-    public static final TagKey<EntityType<?>> RACE_AMORPH =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/amorph"));
-    public static final TagKey<EntityType<?>> RACE_DRAGON =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/dragon"));
-    public static final TagKey<EntityType<?>> RACE_DRAGONBORN =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/dragonborn"));
-    public static final TagKey<EntityType<?>> RACE_PLAYER =
-            TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "race_system/player"));
-     */
-
-    public static final Map<String, TagKey<?>> DYNAMIC_RACES = new HashMap<>();
 
     public static final TagKey<EntityType<?>> CRASH_FIX =
             TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(PotatoEssentials.MOD_ID, "crash_fix/culprits"));

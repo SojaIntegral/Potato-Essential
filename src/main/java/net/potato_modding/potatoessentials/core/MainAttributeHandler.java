@@ -1,7 +1,10 @@
 package net.potato_modding.potatoessentials.core;
 
+import com.snackpirate.aeromancy.spells.AASpells;
 import dev.shadowsoffire.apothic_attributes.api.ALObjects;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
+import net.acetheeldritchking.cataclysm_spellbooks.registries.CSAttributeRegistry;
+import net.ender.endersequipment.registries.EEAttributeRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -18,10 +22,12 @@ import net.potato_modding.potatoessentials.datagen.MobElementLoader;
 import net.potato_modding.potatoessentials.datagen.MobRaceLoader;
 import net.potato_modding.potatoessentials.registry.PotatoEssentialsAttributes;
 import net.potato_modding.potatoessentials.tags.PotatoTags;
+import net.warphan.iss_magicfromtheeast.registries.MFTEAttributeRegistries;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static net.potato_modding.potatoessentials.PotatoEssentials.MOD_ID;
@@ -93,7 +99,7 @@ public class MainAttributeHandler {
         return ThreadLocalRandom.current().nextInt(shinyChanceModifier) == 0;
     }
 
-    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     private static void handleResistanceAttribute(EntityJoinLevelEvent event) {
 
         var entity = event.getEntity();
@@ -112,7 +118,7 @@ public class MainAttributeHandler {
         boolean isShiny = false;
         double[] attrVar = new double[10];
         // Chance for shiny & prevents shinies from losing perfect IVs
-        if (mob.getType().is(PotatoTags.NERFED_MOB)) {
+        if (mob.getType().is(PotatoTags.NERFED_MOB) || !ServerConfigs.IV_SYSTEM.get()) {
             Arrays.fill(attrVar, 0);
         }
         else if (shinyAttribute()) {
@@ -121,7 +127,7 @@ public class MainAttributeHandler {
         }
         // Adds + 0~15% to Familiars' attributes & can be rerolled
         // I should be able to copy this code over and make so non-shinies are rerolled
-        else if (!shinyAttribute() || canReroll) {
+        else {
             for (int i = 0; i < attrVar.length; i++) {
                 attrVar[i] = Math.random() * randMax;
             }
@@ -142,25 +148,25 @@ public class MainAttributeHandler {
                 ToughMod = boss_mod * (2 * (1 + attrVar[0]));
                 AttackMod = boss_mod * (2 * (1 + attrVar[1]));
             }
-            if (mob.getType().is(PotatoTags.MINIBOSS)) {
+            else if (mob.getType().is(PotatoTags.MINIBOSS)) {
                 mobType = mini_mod;
                 ArmorMod = mini_mod * (1.5 * (1 + attrVar[0]));
                 ToughMod = mini_mod * (1.5 * (1 + attrVar[0]));
                 AttackMod = mini_mod * (1 * (1 + attrVar[1]));
             }
-            if (mob.getType().is(PotatoTags.NORMAL)) {
+            else if (mob.getType().is(PotatoTags.NORMAL)) {
                 mobType = mob_mod;
                 ArmorMod = mob_mod * (0.75 * (1 + attrVar[0]));
                 ToughMod = mob_mod * (0.5 * (1 + attrVar[0]));
                 AttackMod = mob_mod * (0.65 * (1 + attrVar[1]));
             }
-            if (mob.getType().is(PotatoTags.SUMMON)) {
+            else if (mob.getType().is(PotatoTags.SUMMON)) {
                 mobType = summon_mod;
                 ArmorMod = summon_mod * (1 * (1 + attrVar[0]));
                 ToughMod = summon_mod * (0.5 * (1 + attrVar[0]));
                 AttackMod = summon_mod * (0.5 * (1 + attrVar[1]));
             }
-            if (mob.getType().is(PotatoTags.PLAYER)) {
+            else {
                 mobType = 1;
                 ArmorMod = 1;
                 ToughMod = 1;
@@ -175,6 +181,12 @@ public class MainAttributeHandler {
                     String raceName = tagKey.location().getPath().substring("mob_races/".length());
                     ResourceLocation dataId = ResourceLocation.fromNamespaceAndPath(MOD_ID, raceName);
                     var data = MobRaceLoader.get(dataId);
+
+                    System.out.println("Modifier: " + mobType);
+                    System.out.println("Modifier: " + boss_mod);
+                    System.out.println("Modifier: " + mini_mod);
+                    System.out.println("Modifier: " + mob_mod);
+                    System.out.println("Modifier: " + summon_mod);
 
                     Attack = data.attack() * AttackMod;
                     Armor = data.armor() * ArmorMod;
@@ -198,6 +210,9 @@ public class MainAttributeHandler {
                     ProtShred = data.protShred() * (1 + attrVar[6]);
                     CritDmg = data.critDmg() + attrVar[7];
                     Crit = data.crit() + attrVar[7];
+
+                    System.out.println("Resist: " + data.resist() + " " + Resist);
+                    System.out.println("ID: " + raceName);
                 }
             });
 
@@ -221,8 +236,12 @@ public class MainAttributeHandler {
                     EldritchRes *= data.eldritchRes() * mobType;
                     SoulRes *= data.soulRes() * mobType;
                     EnderRes *= data.enderRes() * mobType;
+
+                    System.out.println("Resist2: " + data.resist() + " " + Resist);
                 }
             });
+
+            System.out.println("Resist Final: " + Resist);
 
             {
                 if (attrVar[0] == 1 && attrVar[1] == 1 && attrVar[2] == 1 && attrVar[3] == 1 &&
@@ -255,24 +274,24 @@ public class MainAttributeHandler {
                 }
                 // This needs to be conditional or the game shits itself if the mod is not present
                 if (ModList.get().isLoaded("endersequipment")) {
-                    multiplyModifierIfValid(mob, net.ender.endersequipment.registries.EEAttributeRegistry.BLADE_MAGIC_RESIST, (BigDecimal.valueOf(NeutralRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "blade_resist");
+                    multiplyModifierIfValid(mob, EEAttributeRegistry.BLADE_MAGIC_RESIST, (BigDecimal.valueOf(NeutralRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "blade_resist");
                     //var MIND_GOBLIN_RESIST = net.ender.endersequipment.registries.EEAttributeRegistry.MIND_SPELL_RESIST;
                     //multiplyModifierIfValid(mob, MIND_GOBLIN_RESIST, (BigDecimal.valueOf(SoulRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "mind_resist");
                 }
                 if (ModList.get().isLoaded("cataclysm_spellbooks")) {
-                    multiplyModifierIfValid(mob, net.acetheeldritchking.cataclysm_spellbooks.registries.CSAttributeRegistry.ABYSSAL_MAGIC_RESIST, (BigDecimal.valueOf(WaterRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "abyssal_resist");
+                    multiplyModifierIfValid(mob, CSAttributeRegistry.ABYSSAL_MAGIC_RESIST, (BigDecimal.valueOf(WaterRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "abyssal_resist");
                     //multiplyModifierIfValid(mob, net.acetheeldritchking.cataclysm_spellbooks.registries.CSAttributeRegistry.TECHNOMANCY_MAGIC_RESIST, (BigDecimal.valueOf(NeutralRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "technomancy_resist");
                 }
                 if (ModList.get().isLoaded("alshanex_familiars")) {
                     multiplyModifierIfValid(mob, net.alshanex.familiarslib.registry.AttributeRegistry.SOUND_MAGIC_RESIST, (BigDecimal.valueOf(HolyRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "sound_resist");
                 }
                 if (ModList.get().isLoaded("aero_additions")) {
-                    multiplyModifierIfValid(mob, com.snackpirate.aeromancy.spells.AASpells.Attributes.WIND_MAGIC_RESIST, (BigDecimal.valueOf(WindRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "wind_resist");
+                    multiplyModifierIfValid(mob, AASpells.Attributes.WIND_MAGIC_RESIST, (BigDecimal.valueOf(WindRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "wind_resist");
                 }
                 if (ModList.get().isLoaded("iss_magicfromtheeast")) {
-                    multiplyModifierIfValid(mob, net.warphan.iss_magicfromtheeast.registries.MFTEAttributeRegistries.SYMMETRY_MAGIC_RESIST, (BigDecimal.valueOf(HolyRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "symmetry_resist");
-                    multiplyModifierIfValid(mob, net.warphan.iss_magicfromtheeast.registries.MFTEAttributeRegistries.SPIRIT_MAGIC_RESIST, (BigDecimal.valueOf(SoulRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "spirit_resist");
-                    multiplyModifierIfValid(mob, net.warphan.iss_magicfromtheeast.registries.MFTEAttributeRegistries.DUNE_MAGIC_RESIST, (BigDecimal.valueOf(EarthRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "dune_resist");
+                    multiplyModifierIfValid(mob, MFTEAttributeRegistries.SYMMETRY_MAGIC_RESIST, (BigDecimal.valueOf(HolyRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "symmetry_resist");
+                    multiplyModifierIfValid(mob, MFTEAttributeRegistries.SPIRIT_MAGIC_RESIST, (BigDecimal.valueOf(SoulRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "spirit_resist");
+                    multiplyModifierIfValid(mob, MFTEAttributeRegistries.DUNE_MAGIC_RESIST, (BigDecimal.valueOf(EarthRes).setScale(2, RoundingMode.HALF_UP).doubleValue() - 1), "dune_resist");
                 }
                 //if (ModList.get().isLoaded("traveloptics")) {}
 

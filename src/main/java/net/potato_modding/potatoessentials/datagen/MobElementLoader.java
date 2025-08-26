@@ -14,7 +14,7 @@ import java.util.Map;
 public class MobElementLoader extends SimpleJsonResourceReloadListener {
 
     private static final Gson GSON = new GsonBuilder().create();
-    private static final Map<ResourceLocation, MobElementData> DATA = new HashMap<>();
+    public static final Map<ResourceLocation, MobElementData> DATA = new HashMap<>();
 
     public record MobElementData(
             double resist,
@@ -39,14 +39,21 @@ public class MobElementLoader extends SimpleJsonResourceReloadListener {
                          ResourceManager resourceManager,
                          ProfilerFiller profiler) {
         DATA.clear();
-        jsons.forEach((id, json) -> DATA.put(id, GSON.fromJson(json, MobElementData.class)));
+        jsons.forEach((id, json) -> {
+            try {
+                DATA.put(id, GSON.fromJson(json, MobElementData.class));
+            } catch (Exception e) {
+                System.err.println("[MobElementLoader] Failed to parse JSON for " + id);
+                e.printStackTrace();
+            }
+        });
     }
 
     public static MobElementData get(ResourceLocation id) {
         return DATA.getOrDefault(id, defaultValues());
     }
 
-    private static MobElementData defaultValues() {
+    public static MobElementData defaultValues() {
         return new MobElementData(0,0,0,0,0,0,0,0,0,0,0);
     }
 }
