@@ -5,6 +5,8 @@ import net.potato_modding.potatoessentials.config.ServerConfigs;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.potato_modding.potatoessentials.utils.RebalanceHandler.rebalanceResistFormula;
+
 public class ConfigFormulas {
 
     public static double modifier;
@@ -14,26 +16,6 @@ public class ConfigFormulas {
     public static double mob_mod;
     public static double summon_mod;
 
-    // Rebalance Formula
-    static {
-        // List of possible valid configs
-        List<Integer> safetyCheck = new ArrayList<>();
-        safetyCheck.add(1);
-        safetyCheck.add(2);
-        safetyCheck.add(3);
-        safetyCheck.add(4);
-        safetyCheck.add(5);
-        safetyCheck.add(6);
-
-        // Defining variables that hod the values that were input in the configs
-        int config_check = net.potato_modding.potatoessentials.config.ServerConfigs.FORMULA_REBALANCE.get();
-        // Making sure we aren't trying to math out nonsense for spawn_armor.json
-        if (!safetyCheck.contains(net.potato_modding.potatoessentials.config.ServerConfigs.FORMULA_REBALANCE.get())) config_check = 4;
-        if (config_check == 3) modifier = 1.225;
-        else if (config_check == 4 || config_check == 6) modifier = 2.5;
-        else modifier = 1;
-    }
-
     // Modifiers
     public static double mobType = 0;
     public static double ArmorMod = 0;
@@ -41,6 +23,8 @@ public class ConfigFormulas {
     public static double AttackMod = 0;
 
     static {
+        modifier = 1.75 / rebalanceResistFormula(2);
+
         if(!ServerConfigs.BOSS_RESIST.get()) boss_mod = ServerConfigs.BOSS_RESIST_VALUE.get();
         else boss_mod = 1.15 * modifier;
 

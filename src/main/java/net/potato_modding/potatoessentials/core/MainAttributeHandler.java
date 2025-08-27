@@ -7,6 +7,8 @@ import net.acetheeldritchking.cataclysm_spellbooks.registries.CSAttributeRegistr
 import net.ender.endersequipment.registries.EEAttributeRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -20,14 +22,12 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.potato_modding.potatoessentials.config.ServerConfigs;
 import net.potato_modding.potatoessentials.datagen.MobElementLoader;
 import net.potato_modding.potatoessentials.datagen.MobRaceLoader;
-import net.potato_modding.potatoessentials.registry.PotatoEssentialsAttributes;
 import net.potato_modding.potatoessentials.tags.PotatoTags;
 import net.warphan.iss_magicfromtheeast.registries.MFTEAttributeRegistries;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static net.potato_modding.potatoessentials.PotatoEssentials.MOD_ID;
@@ -36,8 +36,6 @@ import static net.potato_modding.potatoessentials.utils.ConfigFormulas.*;
 @SuppressWarnings({"unused", "deprecation"})
 @EventBusSubscriber
 public class MainAttributeHandler {
-
-
 
     private static double SpellPower;
     private static double CastReduction;
@@ -62,8 +60,8 @@ public class MainAttributeHandler {
     private static double CritDmg;
     private static double Crit;
 
-    private static void setIfNonNull(LivingEntity entity, Holder<Attribute> attribute, double value) {
-        var instance = entity.getAttributes().getInstance(attribute);
+    private static void setIfNonNull(LivingEntity entity, double value) {
+        var instance = entity.getAttributes().getInstance(ALObjects.Attributes.LIFE_STEAL);
         if (instance != null) {
             instance.setBaseValue(value);
         }
@@ -105,17 +103,18 @@ public class MainAttributeHandler {
         var entity = event.getEntity();
         if (!(entity instanceof LivingEntity mob)) return;
 
-        double shinyAttribute = 0;
-        if (mob.getAttributes().hasAttribute(PotatoEssentialsAttributes.SHINY))
-            shinyAttribute = mob.getAttributeValue(PotatoEssentialsAttributes.SHINY);
-        // If the mob is shiny, it won't have this modifier
-        boolean alreadyShiny = (shinyAttribute >= 1);
-        if (alreadyShiny) return;
-        // If the mob is shiny, it won't have this modifier
-        boolean canReroll = shinyAttribute < 1;
+        boolean isShiny = false;
+        CompoundTag nbtdata = mob.getPersistentData();
+        CompoundTag potatoData = nbtdata.getCompound("PotatoData");
+
+        if (nbtdata.contains("PotatoData", Tag.TAG_COMPOUND) && !potatoData.getBoolean("shiny")
+                || nbtdata.contains("PotatoData", Tag.TAG_COMPOUND) && potatoData.getBoolean("shiny")) return;
+        else {
+            potatoData.putBoolean("shiny", false);
+            nbtdata.put("PotatoData", potatoData);
+        }
 
         // IVs variation setup
-        boolean isShiny = false;
         double[] attrVar = new double[10];
         // Chance for shiny & prevents shinies from losing perfect IVs
         if (mob.getType().is(PotatoTags.NERFED_MOB) || !ServerConfigs.IV_SYSTEM.get()) {
@@ -125,8 +124,6 @@ public class MainAttributeHandler {
             Arrays.fill(attrVar, 1 * randMax);
             isShiny = true;
         }
-        // Adds + 0~15% to Familiars' attributes & can be rerolled
-        // I should be able to copy this code over and make so non-shinies are rerolled
         else {
             for (int i = 0; i < attrVar.length; i++) {
                 attrVar[i] = Math.random() * randMax;
@@ -135,7 +132,7 @@ public class MainAttributeHandler {
 
         // Checks if the mob has a valid modifier from here
         // If not, it gives the mob modifiers
-        if (mob.getType().is(PotatoTags.MOB_ENABLED) && canReroll) {
+        if (mob.getType().is(PotatoTags.MOB_ENABLED)) {
 
             if (ServerConfigs.NATURE_SYSTEM.get() && mob.getType().is(PotatoTags.HAS_NATURE)) {
                 PotatoNaturesHandler.applySpawnModifiers(mob);
@@ -182,12 +179,6 @@ public class MainAttributeHandler {
                     ResourceLocation dataId = ResourceLocation.fromNamespaceAndPath(MOD_ID, raceName);
                     var data = MobRaceLoader.get(dataId);
 
-                    System.out.println("Modifier: " + mobType);
-                    System.out.println("Modifier: " + boss_mod);
-                    System.out.println("Modifier: " + mini_mod);
-                    System.out.println("Modifier: " + mob_mod);
-                    System.out.println("Modifier: " + summon_mod);
-
                     Attack = data.attack() * AttackMod;
                     Armor = data.armor() * ArmorMod;
                     Tough = data.tough() * ToughMod;
@@ -210,9 +201,6 @@ public class MainAttributeHandler {
                     ProtShred = data.protShred() * (1 + attrVar[6]);
                     CritDmg = data.critDmg() + attrVar[7];
                     Crit = data.crit() + attrVar[7];
-
-                    System.out.println("Resist: " + data.resist() + " " + Resist);
-                    System.out.println("ID: " + raceName);
                 }
             });
 
@@ -236,26 +224,26 @@ public class MainAttributeHandler {
                     EldritchRes *= data.eldritchRes() * mobType;
                     SoulRes *= data.soulRes() * mobType;
                     EnderRes *= data.enderRes() * mobType;
-
-                    System.out.println("Resist2: " + data.resist() + " " + Resist);
                 }
             });
-
-            System.out.println("Resist Final: " + Resist);
 
             {
                 if (attrVar[0] == 1 && attrVar[1] == 1 && attrVar[2] == 1 && attrVar[3] == 1 &&
                         attrVar[4] == 1 && attrVar[5] == 1 && attrVar[6] == 1 && attrVar[7] == 1) {
                     isShiny = true;
                 }
-                // Vanilla Attributes
-                if (isShiny && ServerConfigs.IV_SYSTEM.get()) {
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.SHINY, 1, "shiny");
-                }
-                addModifierIfValid(mob, Attributes.ATTACK_DAMAGE, BigDecimal.valueOf(Attack).setScale(2, RoundingMode.HALF_UP).doubleValue(), "attack");
 
-                addModifierIfValid(mob, Attributes.ARMOR, BigDecimal.valueOf(Armor).setScale(2, RoundingMode.HALF_UP).doubleValue(), "armor");
-                addModifierIfValid(mob, Attributes.ARMOR_TOUGHNESS, BigDecimal.valueOf(Tough).setScale(2, RoundingMode.HALF_UP).doubleValue(), "toughness");
+                if (isShiny && ServerConfigs.IV_SYSTEM.get()) {
+                    potatoData.putBoolean("shiny", true);
+                    nbtdata.put("PotatoData", potatoData);
+                }
+
+                // Vanilla Attributes
+                {
+                    addModifierIfValid(mob, Attributes.ATTACK_DAMAGE, BigDecimal.valueOf(Attack).setScale(2, RoundingMode.HALF_UP).doubleValue(), "attack");
+                    addModifierIfValid(mob, Attributes.ARMOR, BigDecimal.valueOf(Armor).setScale(2, RoundingMode.HALF_UP).doubleValue(), "armor");
+                    addModifierIfValid(mob, Attributes.ARMOR_TOUGHNESS, BigDecimal.valueOf(Tough).setScale(2, RoundingMode.HALF_UP).doubleValue(), "toughness");
+                }
 
                 // Magic Attributes
                 if (ModList.get().isLoaded("irons_spellbooks")) {
@@ -296,27 +284,17 @@ public class MainAttributeHandler {
                 //if (ModList.get().isLoaded("traveloptics")) {}
 
                 // Apothic Attributes
-                addModifierIfValid(mob, ALObjects.Attributes.ARMOR_PIERCE, BigDecimal.valueOf(ArmorPierce).setScale(4, RoundingMode.HALF_UP).doubleValue(), "armor_pierce");
-                addModifierIfValid(mob, ALObjects.Attributes.ARMOR_SHRED, BigDecimal.valueOf(ArmorShred).setScale(4, RoundingMode.HALF_UP).doubleValue(), "armor_shred");
-                addModifierIfValid(mob, ALObjects.Attributes.PROT_PIERCE, BigDecimal.valueOf(ProtPierce).setScale(4, RoundingMode.HALF_UP).doubleValue(), "protection_pierce");
-                addModifierIfValid(mob, ALObjects.Attributes.PROT_SHRED, BigDecimal.valueOf(ProtShred).setScale(4, RoundingMode.HALF_UP).doubleValue(), "protection_shred");
-
-                addModifierIfValid(mob, ALObjects.Attributes.CRIT_CHANCE, BigDecimal.valueOf(Crit).setScale(4, RoundingMode.HALF_UP).doubleValue(), "critical_chance");
-                addModifierIfValid(mob, ALObjects.Attributes.CRIT_DAMAGE, BigDecimal.valueOf(CritDmg).setScale(4, RoundingMode.HALF_UP).doubleValue(), "critical_damage");
-
-                if (ServerConfigs.IV_SYSTEM.get() && !mob.getType().is(PotatoTags.NERFED_MOB)) {
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.ATTACK_IV, attrVar[0], "iv");
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.ARMOR_IV, attrVar[1], "iv");
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.POWER_IV, attrVar[2], "iv");
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.RESIST_IV, attrVar[3], "iv");
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.CAST_IV, attrVar[4], "iv");
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.ARMOR_PEN_IV, attrVar[5], "iv");
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.PROT_PEN_IV, attrVar[6], "iv");
-                    addModifierIfValid(mob, PotatoEssentialsAttributes.CRIT_IV, attrVar[7], "iv");
+                {
+                    addModifierIfValid(mob, ALObjects.Attributes.ARMOR_PIERCE, BigDecimal.valueOf(ArmorPierce).setScale(4, RoundingMode.HALF_UP).doubleValue(), "armor_pierce");
+                    addModifierIfValid(mob, ALObjects.Attributes.ARMOR_SHRED, BigDecimal.valueOf(ArmorShred).setScale(4, RoundingMode.HALF_UP).doubleValue(), "armor_shred");
+                    addModifierIfValid(mob, ALObjects.Attributes.PROT_PIERCE, BigDecimal.valueOf(ProtPierce).setScale(4, RoundingMode.HALF_UP).doubleValue(), "protection_pierce");
+                    addModifierIfValid(mob, ALObjects.Attributes.PROT_SHRED, BigDecimal.valueOf(ProtShred).setScale(4, RoundingMode.HALF_UP).doubleValue(), "protection_shred");
+                    addModifierIfValid(mob, ALObjects.Attributes.CRIT_CHANCE, BigDecimal.valueOf(Crit).setScale(4, RoundingMode.HALF_UP).doubleValue(), "critical_chance");
+                    addModifierIfValid(mob, ALObjects.Attributes.CRIT_DAMAGE, BigDecimal.valueOf(CritDmg).setScale(4, RoundingMode.HALF_UP).doubleValue(), "critical_damage");
                 }
 
                 if (ModList.get().isLoaded("cataclysm") && mob.getType().is(PotatoTags.BOSS)) {
-                    setIfNonNull(mob, ALObjects.Attributes.LIFE_STEAL, ServerConfigs.BOSS_LIFESTEAL.get());
+                    setIfNonNull(mob, ServerConfigs.BOSS_LIFESTEAL.get());
                 }
             }
         }
