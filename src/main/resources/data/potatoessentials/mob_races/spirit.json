@@ -20,5 +20,6 @@
   "protPierce": 3,
   "protShred": 0.25,
   "critDmg": -0.25,
-  "crit": 0
+  "crit": 0,
+  "race": "spirit"
 }

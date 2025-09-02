@@ -9,5 +9,6 @@
   "holyRes": 1.2,
   "eldritchRes": 1.2,
   "soulRes": 1.2,
-  "enderRes": 1.2
+  "enderRes": 1.2,
+  "element": "blood"
 }

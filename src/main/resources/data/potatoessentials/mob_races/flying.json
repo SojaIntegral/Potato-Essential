@@ -20,5 +20,6 @@
   "protPierce": 1,
   "protShred": 0.1,
   "critDmg": -0.25,
-  "crit": 0.35
+  "crit": 0.35,
+  "race": "flying"
 }

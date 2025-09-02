@@ -9,5 +9,6 @@
   "holyRes": 0.8,
   "eldritchRes": 1,
   "soulRes": 1,
-  "enderRes": 2
+  "enderRes": 2,
+  "element": "ender"
 }

@@ -20,5 +20,6 @@
   "protPierce": 0,
   "protShred": 0,
   "critDmg": -0.2,
-  "crit": -0.1
+  "crit": -0.045,
+  "race": "dragonborn"
 }

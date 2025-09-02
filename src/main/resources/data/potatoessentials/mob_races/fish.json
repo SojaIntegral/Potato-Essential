@@ -20,5 +20,6 @@
   "protPierce": 1.5,
   "protShred": 0.15,
   "critDmg": -0.125,
-  "crit": -0.05
+  "crit": -0.05,
+  "race": "fish"
 }

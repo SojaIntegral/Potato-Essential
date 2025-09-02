@@ -27,7 +27,8 @@ public class MobElementLoader extends SimpleJsonResourceReloadListener {
             double holyRes,
             double eldritchRes,
             double soulRes,
-            double enderRes
+            double enderRes,
+            String element
     ) {}
 
     public MobElementLoader() {
@@ -54,6 +55,6 @@ public class MobElementLoader extends SimpleJsonResourceReloadListener {
     }
 
     public static MobElementData defaultValues() {
-        return new MobElementData(0,0,0,0,0,0,0,0,0,0,0);
+        return new MobElementData(0,0,0,0,0,0,0,0,0,0,0, "none");
     }
 }

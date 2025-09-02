@@ -38,7 +38,8 @@ public class MobRaceLoader extends SimpleJsonResourceReloadListener {
             double protPierce,
             double protShred,
             double critDmg,
-            double crit
+            double crit,
+            String race
     ) {}
 
     public MobRaceLoader() {
@@ -67,6 +68,6 @@ public class MobRaceLoader extends SimpleJsonResourceReloadListener {
     }
 
     public static MobRaceData defaultValues() {
-        return new MobRaceData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+        return new MobRaceData(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, "none");
     }
 }

@@ -20,5 +20,6 @@
   "protPierce": 0.5,
   "protShred": 0.05,
   "critDmg": -0.05,
-  "crit": -0.025
+  "crit": -0.025,
+  "race": "human"
 }

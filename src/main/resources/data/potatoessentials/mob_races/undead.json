@@ -20,5 +20,6 @@
   "protPierce": 2,
   "protShred": 0.1,
   "critDmg": -0.15,
-  "crit": 0
+  "crit": 0,
+  "race": "undead"
 }

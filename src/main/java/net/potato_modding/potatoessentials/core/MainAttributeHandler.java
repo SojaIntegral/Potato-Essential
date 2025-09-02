@@ -60,6 +60,8 @@ public class MainAttributeHandler {
     private static double CritDmg;
     private static double Crit;
 
+    private static boolean safeguard = false;
+
     private static void setIfNonNull(LivingEntity entity, double value) {
         var instance = entity.getAttributes().getInstance(ALObjects.Attributes.LIFE_STEAL);
         if (instance != null) {

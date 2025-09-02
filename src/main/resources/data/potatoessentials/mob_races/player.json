@@ -20,5 +20,6 @@
   "protPierce": 0,
   "protShred": 0,
   "critDmg": 0,
-  "crit": 0
+  "crit": 0,
+  "race": "player"
 }
