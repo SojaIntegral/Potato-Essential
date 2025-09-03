@@ -189,7 +189,7 @@ public class PotatoNaturesHandler {
     }
 
     public static final Set<ResourceLocation> NATURE_IDS = Set.of(
-            // +CRIT DMG
+            // +CRIT
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "hardy"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "lonely"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "adamant"),
@@ -213,13 +213,13 @@ public class PotatoNaturesHandler {
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "careful"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "quirky"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "sassy"),
-            // +CRIT
+            // +CRIT DMG
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "timid"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "hasty"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "jolly"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "naive"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "serious"),
-            // -CRIT DMG
+            // -CRIT
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "hardy_minus"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "lonely_minus"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "adamant_minus"),
@@ -243,7 +243,7 @@ public class PotatoNaturesHandler {
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "careful_minus"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "quirky_minus"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "sassy_minus"),
-            // -CRIT
+            // -CRIT DMG
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "timid_minus"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "hasty_minus"),
             ResourceLocation.fromNamespaceAndPath("potatoessentials", "jolly_minus"),
