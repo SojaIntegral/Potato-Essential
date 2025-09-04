@@ -1,7 +1,7 @@
 {
-  "attack": 0,
-  "armor": 0,
-  "tough": 0,
+  "attack": 0.05,
+  "armor": 0.05,
+  "tough": 0.05,
   "spellPower": 1,
   "castReduction": 1,
   "resist": 1,

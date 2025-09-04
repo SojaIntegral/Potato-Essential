@@ -19,7 +19,7 @@
   "armorShred": 0.2,
   "protPierce": 1.5,
   "protShred": 0.1,
-  "critDmg": 0,
+  "critDmg": -0.05,
   "crit": -0.035,
   "race": "humanoid"
 }

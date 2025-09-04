@@ -35,8 +35,8 @@ public class PotatoEssentialsAttributes {
     public static final DeferredHolder<Attribute, Attribute> MANA_SHIELD =
             registerRegularAttributes("mana_shield",0,0,10);
 
-    public static final DeferredHolder<Attribute, Attribute> POWER_LEVEL =
-            registerRegularAttributes("power_level",0,0,999999999);
+    public static final DeferredHolder<Attribute, Attribute> SHINY =
+            registerIntAttributes("shiny",0,0,1);
 
     public static void register(IEventBus eventBus) {
         ATTRIBUTES.register(eventBus);
@@ -55,6 +55,12 @@ public class PotatoEssentialsAttributes {
     }
 
     private static DeferredHolder<Attribute, Attribute> registerRegularAttributes(String id, double defaultVal, double minVal, double maxVal) {
+        return ATTRIBUTES.register(id, () ->
+                (new RangedAttribute("attribute.potatoessentials." + id,
+                        defaultVal, minVal, maxVal).setSyncable(true)));
+    }
+
+    private static DeferredHolder<Attribute, Attribute> registerIntAttributes(String id, int defaultVal, int minVal, int maxVal) {
         return ATTRIBUTES.register(id, () ->
                 (new RangedAttribute("attribute.potatoessentials." + id,
                         defaultVal, minVal, maxVal).setSyncable(true)));
